@@ -18,8 +18,6 @@ void Affin::UpdateTrans(Matrix4& matTrans, WorldTransform& worldTransform_)
 
 	worldTransform_.matWorld_ *= matTrans;
 
-
-
 }
 
 void Affin::UpdateScale(Matrix4& matScale, WorldTransform& worldTransform_)
