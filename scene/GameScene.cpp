@@ -37,29 +37,70 @@ void GameScene::Initialize() {
 	//3Dモデルの生成
 	model_ = Model::Create();
 
+	//大元から脊椎
+	//親
+	worldTransforms_[PartId::Root].Initialize();
+	//子
+	worldTransforms_[PartId::Spine].translation_ = { 0,4.5,0 };
+	worldTransforms_[PartId::Spine].parent_ = &worldTransforms_[PartId::Root];
+	worldTransforms_[PartId::Spine].Initialize();
+
+	//上半身
+	worldTransforms_[PartId::Chest].parent_ = &worldTransforms_[PartId::Spine];
+	worldTransforms_[PartId::Chest].translation_ = { 0,0,0 };
+	worldTransforms_[PartId::Chest].Initialize();
+
+
+	worldTransforms_[PartId::Head].parent_ = &worldTransforms_[PartId::Chest];
+	worldTransforms_[PartId::Head].translation_ = { 0,3,0 };
+	worldTransforms_[PartId::Head].Initialize();
+
+	worldTransforms_[PartId::ArmL].parent_ = &worldTransforms_[PartId::Chest];
+	worldTransforms_[PartId::ArmL].translation_ = { 3,0,0 };
+	worldTransforms_[PartId::ArmL].Initialize();
+
+	worldTransforms_[PartId::ArmR].parent_ = &worldTransforms_[PartId::Chest];
+	worldTransforms_[PartId::ArmR].translation_ = { -3,0,0 };
+	worldTransforms_[PartId::ArmR].Initialize();
+
+	worldTransforms_[PartId::Hip].parent_ = &worldTransforms_[PartId::Spine];
+	worldTransforms_[PartId::Hip].translation_ = { 0,-4,0 };
+	worldTransforms_[PartId::Hip].Initialize();
+
+	worldTransforms_[PartId::LegL].parent_ = &worldTransforms_[PartId::Hip];
+	worldTransforms_[PartId::LegL].translation_ = { -3,-3,0 };
+	worldTransforms_[PartId::LegL].Initialize();
+
+	worldTransforms_[PartId::LegR].parent_ = &worldTransforms_[PartId::Hip];
+	worldTransforms_[PartId::LegR].translation_ = { 3,-3,0 };
+	worldTransforms_[PartId::LegR].Initialize();
+
+
+
+
 
 	Matrix4 matScale = MathUtility::Matrix4Identity();
 	Matrix4 matTrans = MathUtility::Matrix4Identity();
 	Matrix4 matRotate = MathUtility::Matrix4Identity();
 
-	//100個生成
-	for (size_t i = 0; i < _countof(worldTransforms_); i++) {
-		
-		//ワールドトランスフォーム初期化
-		worldTransforms_[i].Initialize();
-		//X,Y,Z方向のスケーリング
-		worldTransforms_[i].scale_ = { 1.0f,1.0f,1.0f };
-		//回転角設定
-		worldTransforms_[i].rotation_ = { rotDist(engine),rotDist(engine),rotDist(engine) };
-		//平行移動
-		worldTransforms_[i].translation_ = { posDist(engine),posDist(engine),posDist(engine) };
+	////100個生成
+	//for (size_t i = 0; i < _countof(worldTransforms_); i++) {
+	//	
+	//	//ワールドトランスフォーム初期化
+	//	worldTransforms_[i].Initialize();
+	//	//X,Y,Z方向のスケーリング
+	//	worldTransforms_[i].scale_ = { 1.0f,1.0f,1.0f };
+	//	//回転角設定
+	//	worldTransforms_[i].rotation_ = { rotDist(engine),rotDist(engine),rotDist(engine) };
+	//	//平行移動
+	//	worldTransforms_[i].translation_ = { posDist(engine),posDist(engine),posDist(engine) };
 
-		Affin::UpdateTrans(matTrans, worldTransforms_[i]);
-		Affin::UpdateScale(matScale, worldTransforms_[i]);
-		Affin::UpdateRotate(matRotate, worldTransforms_[i]);
-		worldTransforms_[i].TransferMatrix();
+	//	Affin::UpdateTrans(matTrans, worldTransforms_[i]);
+	//	Affin::UpdateScale(matScale, worldTransforms_[i]);
+	//	Affin::UpdateRotate(matRotate, worldTransforms_[i]);
+	//	worldTransforms_[i].TransferMatrix();
 
-	}
+	//}
 
 	
 	
@@ -103,17 +144,17 @@ void GameScene::Initialize() {
 	//カメラ上方向ベクトルを設定
 	//viewProjection_.up = { cosf(3.14f / 4.0f),sinf(3.14f / 4.0f),0.0f };
 
-	//アスペ
-	viewProjection_.aspectRatio = 1.0f;
+	////アスペ
+	//viewProjection_.aspectRatio = 1.0f;
 
-	//ニアクリップ距離を設定	
-	viewProjection_.nearZ = 52.0f;
+	////ニアクリップ距離を設定	
+	//viewProjection_.nearZ = 52.0f;
 
-	//ファークリップの距離を設定
-	viewProjection_.farZ = 58.0f;
+	////ファークリップの距離を設定
+	//viewProjection_.farZ = 58.0f;
 
-	//カメラ垂直方向視野角を設定
-	viewProjection_.fovAngleY = 3.14f / 180.0f * 104.0f;
+	////カメラ垂直方向視野角を設定
+	//viewProjection_.fovAngleY = 3.14f / 180.0f * 104.0f;
 	
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -222,6 +263,84 @@ void GameScene::Update() {
 		debugText_->SetPos(50, 90);
 		debugText_->Printf(
 			"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
+	}
+
+
+	//キャラクター移動処理
+	{
+		//キャラクターの移動ベクトル
+		Vector3 move = { 0,0,0 };
+
+		//キャラクターの移動速度
+		const float kCharacterSpeed = 0.2f;
+
+		//押した方向で移動ベクトル
+		if (input_->PushKey(DIK_LEFT)) {
+			move = { -kCharacterSpeed,0,0 };
+		}
+		else if (input_->PushKey(DIK_RIGHT)) {
+			move = { kCharacterSpeed,0,0 };
+		}
+
+		//上半身回転処理
+		{
+			//速さ
+			const float kChestRotSpeed = 0.05f;
+
+			//
+			if (input_->PushKey(DIK_U)) {
+				worldTransforms_[PartId::Chest].rotation_.y -= kChestRotSpeed;
+
+			}
+			else if (input_->PushKey(DIK_I)) {
+				worldTransforms_[PartId::Chest].rotation_.y += kChestRotSpeed;
+
+			}
+
+
+
+		}
+
+		{
+			//速さ
+			const float kHipRotSpeed = 0.05f;
+
+			//
+			if (input_->PushKey(DIK_J)) {
+				worldTransforms_[PartId::Hip].rotation_.y -= kHipRotSpeed;
+
+			}
+			else if (input_->PushKey(DIK_K)) {
+				worldTransforms_[PartId::Hip].rotation_.y += kHipRotSpeed;
+
+			}
+
+
+
+		}
+
+		//注視点移動(ベクトルの加算)
+		worldTransforms_[PartId::Root].translation_.x += move.x;
+		worldTransforms_[PartId::Root].translation_.y += move.y;
+		worldTransforms_[PartId::Root].translation_.z += move.z;
+
+		worldTransforms_[PartId::Root].TransferMatrix();
+		worldTransforms_[PartId::Spine].TransferMatrix();
+		worldTransforms_[PartId::Chest].TransferMatrix();
+		worldTransforms_[PartId::Head].TransferMatrix();
+		worldTransforms_[PartId::ArmL].TransferMatrix();
+		worldTransforms_[PartId::ArmR].TransferMatrix();
+		worldTransforms_[PartId::Hip].TransferMatrix();
+		worldTransforms_[PartId::LegL].TransferMatrix();
+		worldTransforms_[PartId::LegR].TransferMatrix();
+
+
+		//デバッグ用表示
+		debugText_->SetPos(50, 150);
+		debugText_->Printf(
+			"Root:(%f,%f,%f)", worldTransforms_[PartId::Root].translation_.x,
+			worldTransforms_[PartId::Root].translation_.y,
+			worldTransforms_[PartId::Root].translation_.z);
 	}
 
 	//Fov変換処理

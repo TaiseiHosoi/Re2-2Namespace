@@ -31,6 +31,20 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// 
+	
+	enum PartId {
+		Root,	//大元
+		Spine,	//脊椎
+		Chest,	//胸
+		Head,	//頭
+		ArmL,	//左上
+		ArmR,	//右腕
+		Hip,	//尻
+		LegL,	//左足
+		LegR,	//右足
+	};
+
 	void Initialize();
 
 	/// <summary>
