@@ -77,6 +77,12 @@ private: // メンバ変数
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 
+	//変化させる量の箱
+	Matrix4 matScale;
+	Matrix4 matTrans;
+	Matrix4 matRotate;
+
+
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 
