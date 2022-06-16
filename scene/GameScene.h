@@ -82,6 +82,8 @@ private: // メンバ変数
 	Matrix4 matTrans[10];
 	Matrix4 matRotate[10];
 
+	int partValue;
+
 
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;

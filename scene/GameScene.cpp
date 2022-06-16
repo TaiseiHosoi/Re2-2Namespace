@@ -46,6 +46,9 @@ void GameScene::Initialize() {
 		matTrans[i] = MathUtility::Matrix4Identity();
 		matRotate[i] = MathUtility::Matrix4Identity();
 	}
+
+	partValue = 9;
+
 	//大元から脊髄
 	worldTransforms_[PartId::Root].Initialize();
 	//子
@@ -275,7 +278,7 @@ void GameScene::Update() {
 			"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 	
 	//関数用行列初期化
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < partValue; i++) {
 		matTrans[i] = MathUtility::Matrix4Identity();
 		matRotate[i] = MathUtility::Matrix4Identity();
 	}
@@ -331,7 +334,7 @@ void GameScene::Update() {
 
 		//行列の更新
 		
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < partValue; i++) {
 				Affin::UpdateTrans(matTrans[i], worldTransforms_[i]);
 				Affin::UpdateRotateY(matRotate[i], worldTransforms_[i]);
 				Affin::UpdateMatrixWorld(matTrans[i], matRotate[i], worldTransforms_[i]);
