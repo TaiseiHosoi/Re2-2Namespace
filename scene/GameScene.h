@@ -69,7 +69,7 @@ private: // メンバ変数
 	Model* model_ = nullptr;
 
 	//ワールドトランスフォーム
-	WorldTransform worldTransforms_[100];
+	WorldTransform worldTransforms_[10];
 
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
@@ -79,8 +79,8 @@ private: // メンバ変数
 
 	//変化させる量の箱
 	Matrix4 matScale;
-	Matrix4 matTrans;
-	Matrix4 matRotate;
+	Matrix4 matTrans[10];
+	Matrix4 matRotate[10];
 
 
 	//デバッグカメラ
