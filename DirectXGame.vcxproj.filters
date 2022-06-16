@@ -49,6 +49,12 @@
     <Filter Include="ヘッダー ファイル\math">
       <UniqueIdentifier>{647f4977-924a-4954-923f-5619e5afc9a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Affin">
+      <UniqueIdentifier>{c77809e6-4977-446f-88ea-0dea59323bf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Affin">
+      <UniqueIdentifier>{d3b1002e-d2b9-4d67-a24a-cb5c82ba2454}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -66,8 +72,8 @@
     <ClCompile Include="scene\GameScene.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
-    <ClCompile Include="Affin.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Affin\Affin.cpp">
+      <Filter>ソース ファイル\Affin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,8 +158,8 @@
     <ClInclude Include="3d\PrimitiveDrawer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Affin.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Affin\Affin.h">
+      <Filter>ヘッダー ファイル\Affin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
