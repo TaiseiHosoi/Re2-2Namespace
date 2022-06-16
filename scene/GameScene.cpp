@@ -344,17 +344,8 @@ void GameScene::Update() {
 			}
 			
 		
-		////注視点移動(ベクトルの加算)
-		//worldTransforms_[PartId::Root].translation_.x += move.x;
-		//worldTransforms_[PartId::Root].translation_.y += move.y;
-		//worldTransforms_[PartId::Root].translation_.z += move.z;
 
-
-
-
-		
-
-
+		//行列の転送
 		worldTransforms_[PartId::Root].TransferMatrix();
 		worldTransforms_[PartId::Spine].TransferMatrix();
 		worldTransforms_[PartId::Chest].TransferMatrix();
