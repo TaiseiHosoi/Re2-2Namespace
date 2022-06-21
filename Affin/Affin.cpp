@@ -9,16 +9,12 @@
 
 void Affin::UpdateTrans(Matrix4& matTrans, WorldTransform& worldTransform_)
 {
-
-
-
 	matTrans = {
 		1.0f,0.0f,0.0f,0.0f,
 		0.0f,1.0f,0.0f,0.0f,
 		0.0f,0.0f,1.0f,0.0f,
 		worldTransform_.translation_.x,worldTransform_.translation_.y,worldTransform_.translation_.z,1.0f
 	};
-
 
 }
 

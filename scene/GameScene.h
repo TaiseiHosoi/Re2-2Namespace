@@ -1,16 +1,16 @@
 ﻿#pragma once
 
 #include "Audio.h"
-#include "DirectXCommon.h"
 #include "DebugText.h"
+#include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "DebugCamera.h"
-#include"Affin.h"
+#include <DirectXMath.h>
 
 /// <summary>
 /// ゲームシーン
@@ -31,20 +31,6 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// 
-	
-	enum PartId {
-		Root,	//大元
-		Spine,	//脊椎
-		Chest,	//胸
-		Head,	//頭
-		ArmL,	//左上
-		ArmR,	//右腕
-		Hip,	//尻
-		LegL,	//左足
-		LegR,	//右足
-	};
-
 	void Initialize();
 
 	/// <summary>
@@ -62,37 +48,28 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
-
-	//テクスチャハンドル
-	uint32_t textureHandle_ = 0;
-	//3Dモデル
-	Model* model_ = nullptr;
-
-	//ワールドトランスフォーム
-	WorldTransform worldTransforms_[10];
-
-	//ビュープロジェクション
-	ViewProjection viewProjection_;
+	uint32_t textureHandle_ = 0; //テクスチャハンドル
+	uint32_t textureHandle2_ = 0;
+	uint32_t soundDataHandle_ = 0;
+	uint32_t voiceHandle_ = 0;
+	//自キャラ
+	Player* player_ = nullptr;
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 
-	//変化させる量の箱
-	Matrix4 matScale;
-	Matrix4 matTrans[10];
-	Matrix4 matRotate[10];
+	//スプライト
+	Sprite* sprite_ = nullptr;
+	Model* model_ = nullptr;
 
-	int partValue;
+	//ワールドトランスフォーム初期化
+	WorldTransform worldTransform_;
 
-
-	//デバッグカメラ
-	DebugCamera* debugCamera_ = nullptr;
-
-	Vector3 lineStart(int x, int y, int z);
-	Vector3 lineFinish(int x, int y, int z);
-	Vector4 lineColor(int x, int y, int z, int w);
+	//ビュープロジェクション初期化
+	ViewProjection viewProjection_;
 
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	///
 };
