@@ -27,8 +27,8 @@ void Player::Initialize(Model* model, uint32_t &textureHandle) {
 
 void Player::Update() {
 
-	//視点の移動ベクトル
-	{
+
+		//移動
 		Vector3 move = {0.0f, 0.0f, 0.0f};
 
 		//視点の移動速さ
@@ -49,14 +49,27 @@ void Player::Update() {
 
 		worldTransform_.translation_ += move;
 
+		//回転
+		Vector3 rotateY = { 0.0f,0.0f,0.0f };
+
+		const float kRotateSpeed = 0.1f;
+		if (input_->PushKey(DIK_E)) {
+			rotateY += {0, kRotateSpeed, 0};
+		}
+		else if (input_->PushKey(DIK_Q)) {
+			rotateY -= {0, kRotateSpeed, 0};
+		}
+		worldTransform_.rotation_ += rotateY;
+
 		//アフィン行列計算
+		Affin::UpdateRotateY(affinRotate, worldTransform_);
 		Affin::UpdateTrans(affinTrans, worldTransform_);
 		Affin::UpdateMatrixWorld(affinTrans, affinRotate, worldTransform_);
 
 		//アフィン行列転送
 		worldTransform_.TransferMatrix();
 
-	}
+	
 }
 
 void Player::Draw(ViewProjection viewProjection) {

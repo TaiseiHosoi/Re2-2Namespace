@@ -59,8 +59,9 @@ void Affin::UpdateRotateY(Matrix4& matRotateY, WorldTransform& worldTransform_)
 }
 void Affin::UpdateMatrixWorld(Matrix4 &matTrans, Matrix4 &matRotateY,WorldTransform& worldTransform_)
 {
-	worldTransform_.matWorld_ = MathUtility::Matrix4Identity();
-	worldTransform_.matWorld_ *= matTrans;
+	worldTransform_.matWorld_ = MathUtility::Matrix4Identity();	
 	worldTransform_.matWorld_ *= matRotateY;
+	worldTransform_.matWorld_ *= matTrans;
+
 
 }
