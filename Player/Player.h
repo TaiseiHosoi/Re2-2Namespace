@@ -1,7 +1,7 @@
 #pragma once
 #include "Audio.h"
 #include "DebugText.h"
-#include "DirectXCommon.h"
+#include <DirectXCommon.h>
 #include "Input.h"
 #include "Math.h"
 #include "Model.h"
@@ -43,7 +43,9 @@ class Player {
 
 	Vector3 transPos = {0, 0, 0};
 
-	Matrix4 affinTrans;
+	Matrix4 affinTrans = MathUtility::Matrix4Identity();
+	Matrix4 affinRotate = MathUtility::Matrix4Identity();
+	Matrix4 affinScale = MathUtility::Matrix4Identity();
 
 
 };

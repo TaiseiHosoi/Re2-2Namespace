@@ -4,14 +4,6 @@
 
 void Player::Initialize(Model* model, uint32_t &textureHandle) {
 
-	affinTrans = {
-		1.0f, 0.0f, 0.0f, 0.0f, 
-		0.0f, 1.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 1.0f, 0.0f, 
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
-
-
 	// nullcheck
 	assert(model);
 
@@ -55,25 +47,14 @@ void Player::Update() {
 			move += {kEyeSpeed, 0, 0};
 		}
 
-		affinTrans = {
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-		    0.0f, 0.0f, 1.0f, 0.0f, 
-            move.x, move.y, move.z, 1.0f
-		};
+		worldTransform_.translation_ += move;
 
-		worldTransform_.matWorld_ *= affinTrans;
+		//アフィン行列計算
+		Affin::UpdateTrans(affinTrans, worldTransform_);
+		Affin::UpdateMatrixWorld(affinTrans, affinRotate, worldTransform_);
 
-		worldTransform_.translation_.x = worldTransform_.matWorld_.m[3][0];
-
-		worldTransform_.translation_.y = worldTransform_.matWorld_.m[3][1];
-
-
-		worldTransform_.translation_.z = worldTransform_.matWorld_.m[3][2];
-
+		//アフィン行列転送
 		worldTransform_.TransferMatrix();
-
-		
 
 	}
 }
