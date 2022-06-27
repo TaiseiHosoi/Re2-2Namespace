@@ -42,6 +42,7 @@ class Player {
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+	Matrix4 matVelocity = MathUtility::Matrix4Identity();	//velocityê—ps—ñ	
 
 	Vector3 transPos = {0, 0, 0};
 

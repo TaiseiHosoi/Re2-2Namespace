@@ -57,11 +57,40 @@ void Affin::UpdateRotateY(Matrix4& matRotateY, WorldTransform& worldTransform_)
 	};
 
 }
+
 void Affin::UpdateMatrixWorld(Matrix4 &matTrans, Matrix4 &matRotateY,WorldTransform& worldTransform_)
 {
 	worldTransform_.matWorld_ = MathUtility::Matrix4Identity();	
 	worldTransform_.matWorld_ *= matRotateY;
 	worldTransform_.matWorld_ *= matTrans;
+	
+
+}
+
+void Affin::VectorUpdate(Vector3& vec ,WorldTransform& worldTransform_)
+{
+	Matrix4 matVec = {
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		vec.x,vec.y,vec.z,1.0f
+	};
+
+	Matrix4 matRotateY = {
+		cos(worldTransform_.rotation_.y),0,sin(worldTransform_.rotation_.y),0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		-sin(worldTransform_.rotation_.y),0.0f,cos(worldTransform_.rotation_.y),0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
+
+	matVec *= matRotateY;
+
+	vec.x = matVec.m[3][0];
+	vec.y = matVec.m[3][1];
+	vec.z = matVec.m[3][2];
+
 
 
 }
+
+
