@@ -12,6 +12,8 @@ GameScene::~GameScene() {
 	delete model_;
 
 	delete player_;
+
+	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -24,7 +26,7 @@ void GameScene::Initialize() {
 
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
-	//textureHandle2_ = TextureManager::Load("block.png");
+	textureHandle2_ = TextureManager::Load("block.png");
 	// sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
 
@@ -34,8 +36,12 @@ void GameScene::Initialize() {
 
 	//自キャラの生成
 	player_ = new Player();
+
+	enemy_ = new Enemy();
 	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
+
+	enemy_->Initialize(model_, textureHandle2_);
 
 	//音声再生
 	// audio_->PlayWave(soundDataHandle_);
@@ -46,6 +52,9 @@ void GameScene::Update() {
 
 	//自キャラの更新
 	player_->Update();
+
+	//敵キャラの更新
+	enemy_->Update();
 
 	//転送用の座標
 	Vector3 position = worldTransform_.translation_;
@@ -100,6 +109,8 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+
+	enemy_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

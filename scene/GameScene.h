@@ -11,6 +11,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <DirectXMath.h>
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -54,6 +55,7 @@ private: // メンバ変数
 	uint32_t voiceHandle_ = 0;
 	//自キャラ
 	Player* player_ = nullptr;
+	Enemy* enemy_ = nullptr;
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
@@ -61,9 +63,11 @@ private: // メンバ変数
 	//スプライト
 	Sprite* sprite_ = nullptr;
 	Model* model_ = nullptr;
+	Model* enemyModel_ = nullptr;
 
 	//ワールドトランスフォーム初期化
 	WorldTransform worldTransform_;
+	WorldTransform enemyWorldTransform_;
 
 	//ビュープロジェクション初期化
 	ViewProjection viewProjection_;
