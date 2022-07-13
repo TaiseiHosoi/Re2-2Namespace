@@ -12,6 +12,7 @@
 #include "WorldTransform.h"
 #include <DirectXMath.h>
 #include "Enemy.h"
+#include "Floor.h"
 
 /// <summary>
 /// ゲームシーン
@@ -56,6 +57,7 @@ private: // メンバ変数
 	//自キャラ
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
+	Floor* floor_ = nullptr;
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;

@@ -14,6 +14,8 @@ GameScene::~GameScene() {
 	delete player_;
 
 	delete enemy_;
+
+	delete floor_;
 }
 
 void GameScene::Initialize() {
@@ -34,14 +36,17 @@ void GameScene::Initialize() {
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
-	//自キャラの生成
+	//インスタンス生成
 	player_ = new Player();
-
 	enemy_ = new Enemy();
-	//自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	floor_ = new Floor();
 
+	//初期化
+	player_->Initialize(model_, textureHandle_);
 	enemy_->Initialize(model_, textureHandle2_);
+	floor_->Initialize(model_, textureHandle_);
+
+
 
 	//音声再生
 	// audio_->PlayWave(soundDataHandle_);
@@ -109,8 +114,8 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
-
 	enemy_->Draw(viewProjection_);
+	floor_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

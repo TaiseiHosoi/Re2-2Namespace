@@ -71,7 +71,7 @@ void Enemy::Update()
 	//アフィン行列計算
 	Affin::UpdateRotateY(affinRotate, worldTransform_);
 	Affin::UpdateTrans(affinTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(affinTrans, affinRotate, worldTransform_);
+	Affin::UpdateMatrixWorld(affinScale,affinTrans, affinRotate, worldTransform_);
 
 	//アフィン行列転送
 	worldTransform_.TransferMatrix();
