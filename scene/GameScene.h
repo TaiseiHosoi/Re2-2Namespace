@@ -62,7 +62,8 @@ private: // メンバ変数
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
-	float cameraDistance = 40.0f;
+	float cameraDistance = 0.0f;
+	const int cameraToPlayerDistance = 40;
 
 	//スプライト
 	Sprite* sprite_ = nullptr;

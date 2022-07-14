@@ -83,7 +83,8 @@ void GameScene::Update() {
 	
 	float mag = 1.0f;
 	float eyeLen = std::sqrt(eyePos.x * eyePos.x + eyePos.y * eyePos.y + eyePos.z * eyePos.z);	//ベクトルの長さ
-	if (eyeLen > 1.0f) {
+
+	if (eyeLen > 1.0f) {	//もし差分のベクトルが単位ベクトルより大きかったら
 		mag = 1.0f / eyeLen; //ベクトルの長さを1にする
 	};
 
@@ -91,7 +92,7 @@ void GameScene::Update() {
 	eyePos.y *= mag;
 	eyePos.z *= mag;
 
-	for (int i = 0; i<40; i++) {
+	for (int i = 0; i<cameraToPlayerDistance; i++) {	//1ずつ進むレイ
 		if (floor_->wallTransform.translation_.x - floor_->wallTransform.scale_.x <	//矩形の当たり判定
 			player_->worldTransform_.translation_.x + eyePos.x * i &&
 			floor_->wallTransform.translation_.x + floor_->wallTransform.scale_.x >
@@ -102,11 +103,11 @@ void GameScene::Update() {
 				floor_->wallTransform.translation_.z + floor_->wallTransform.scale_.z >
 				player_->worldTransform_.translation_.z + eyePos.x * i) {
 
-				cameraDistance = i;
+				cameraDistance = i;//レイが物に触れた時点で自機からカメラの位置を保存
 				break;
 
 			}
-		}else if (i >= 39) {
+		}else if (i >= cameraToPlayerDistance-1) {	//触れていない場合
 			cameraDistance = i;
 		}
 		
@@ -115,8 +116,8 @@ void GameScene::Update() {
 	
 
 	viewProjection_.eye =	//ビュープロジェクションに代入
-	{ player_->worldTransform_.translation_.x + eyePos.x * cameraDistance/*長さが40*/,
-	20, 
+	{ player_->worldTransform_.translation_.x + eyePos.x * cameraDistance,
+	20, //カメラの高さ20で固定
 	player_->worldTransform_.translation_.z + eyePos.z * cameraDistance };
 
 	
