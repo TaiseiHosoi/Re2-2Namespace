@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <cassert>
 #include <random>
+#include <cmath>
 
 using namespace DirectX;
 
@@ -29,9 +30,15 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	textureHandle2_ = TextureManager::Load("block.png");
+	textureHandle3_ = TextureManager::Load("sibafu.jpg");
+
 	// sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
 
+
+	//カメラ視点座標を設定
+	viewProjection_.eye = { 0,0,0 };
+	viewProjection_.nearZ = 10;
 
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -44,7 +51,7 @@ void GameScene::Initialize() {
 	//初期化
 	player_->Initialize(model_, textureHandle_);
 	enemy_->Initialize(model_, textureHandle2_);
-	floor_->Initialize(model_, textureHandle_);
+	floor_->Initialize(model_, textureHandle3_);
 
 
 
@@ -54,20 +61,65 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	
-
 	//自キャラの更新
 	player_->Update();
 
 	//敵キャラの更新
 	enemy_->Update();
 
+
 	//転送用の座標
 	Vector3 position = worldTransform_.translation_;
 
 	player_->Attack();
 
+	//ビュー変換
+	viewProjection_.target = enemy_->worldTransform_.translation_;	//注視
 
+	//敵から自機にかけてのベクトル計算
+	Vector3 eyePos = { player_->worldTransform_.translation_.x - enemy_->worldTransform_.translation_.x,
+	player_->worldTransform_.translation_.y - enemy_->worldTransform_.translation_.y,
+	player_->worldTransform_.translation_.z - enemy_->worldTransform_.translation_.z };
+	
+	float mag = 1.0f;
+	float eyeLen = std::sqrt(eyePos.x * eyePos.x + eyePos.y * eyePos.y + eyePos.z * eyePos.z);	//ベクトルの長さ
+	if (eyeLen > 1.0f) {
+		mag = 1.0f / eyeLen; //ベクトルの長さを1にする
+	};
 
+	eyePos.x *= mag;	
+	eyePos.y *= mag;
+	eyePos.z *= mag;
+
+	for (int i = 0; i<40; i++) {
+		if (floor_->wallTransform.translation_.x - floor_->wallTransform.scale_.x <	//矩形の当たり判定
+			player_->worldTransform_.translation_.x + eyePos.x * i &&
+			floor_->wallTransform.translation_.x + floor_->wallTransform.scale_.x >
+			player_->worldTransform_.translation_.x + eyePos.x * i
+			) {
+			if (floor_->wallTransform.translation_.z - floor_->wallTransform.scale_.z <
+				player_->worldTransform_.translation_.z + eyePos.x * i &&
+				floor_->wallTransform.translation_.z + floor_->wallTransform.scale_.z >
+				player_->worldTransform_.translation_.z + eyePos.x * i) {
+
+				cameraDistance = i;
+				break;
+
+			}
+		}else if (i >= 39) {
+			cameraDistance = i;
+		}
+		
+	}
+	
+	
+
+	viewProjection_.eye =	//ビュープロジェクションに代入
+	{ player_->worldTransform_.translation_.x + eyePos.x * cameraDistance/*長さが40*/,
+	20, 
+	player_->worldTransform_.translation_.z + eyePos.z * cameraDistance };
+
+	
 
 	//行列の再計算
 	viewProjection_.UpdateMatrix();

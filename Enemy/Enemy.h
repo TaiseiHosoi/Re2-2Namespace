@@ -23,10 +23,10 @@ public:
 	void Update();
 	void Draw(ViewProjection viewProjection);
 
-
+	WorldTransform worldTransform_;
 
 private:
-	WorldTransform worldTransform_;
+	
 
 	Model* model_ = nullptr;
 

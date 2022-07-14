@@ -51,7 +51,7 @@ void Enemy::Update()
 		move += {kEyeSpeed, 0, 0};
 	}*/
 
-	move += {0, 0, -kEyeSpeed};
+	//move += {0, 0, -kEyeSpeed};
 
 	worldTransform_.translation_ += move;
 

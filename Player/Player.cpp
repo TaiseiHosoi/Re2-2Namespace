@@ -40,9 +40,9 @@ void Player::Update() {
 
 		//押した方向で移動ベクトルを変更
 		if (input_->PushKey(DIK_W)) {
-			move += {0, kEyeSpeed, 0};
+			move += {0, 0, kEyeSpeed};
 		} else if (input_->PushKey(DIK_S)) {
-			move -= {0, kEyeSpeed, 0};
+			move -= {0, 0, kEyeSpeed};
 		}
 
 		if (input_->PushKey(DIK_A)) {

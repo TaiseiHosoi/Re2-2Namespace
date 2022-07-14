@@ -52,6 +52,7 @@ private: // メンバ変数
 	DebugText* debugText_ = nullptr;
 	uint32_t textureHandle_ = 0; //テクスチャハンドル
 	uint32_t textureHandle2_ = 0;
+	uint32_t textureHandle3_ = 0;
 	uint32_t soundDataHandle_ = 0;
 	uint32_t voiceHandle_ = 0;
 	//自キャラ
@@ -61,6 +62,7 @@ private: // メンバ変数
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
+	float cameraDistance = 40.0f;
 
 	//スプライト
 	Sprite* sprite_ = nullptr;
@@ -69,6 +71,7 @@ private: // メンバ変数
 
 	//ワールドトランスフォーム初期化
 	WorldTransform worldTransform_;
+
 	WorldTransform enemyWorldTransform_;
 
 	//ビュープロジェクション初期化

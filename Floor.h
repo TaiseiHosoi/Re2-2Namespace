@@ -22,7 +22,8 @@ public:
     //Vector3 GetTrans();
 
     //ワールド変換データ
-    WorldTransform worldtransform;
+    WorldTransform floorTransform;
+    WorldTransform wallTransform;
 
 private:
 

@@ -28,8 +28,10 @@ class Player {
 
 	void Attack();
 
-  private:
 	WorldTransform worldTransform_;
+
+  private:
+	
 
 	Model* model_ = nullptr;
 	Matrix4 matTrans;

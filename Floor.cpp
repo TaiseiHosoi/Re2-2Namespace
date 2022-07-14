@@ -14,27 +14,40 @@ void Floor::Initialize(Model* model, uint32_t textureHandle) {
 
     debugText_ = DebugText::GetInstance();
 
-    //ワールド変換初期化
-    worldtransform.Initialize();
-
-    worldtransform.translation_ = { -10,-10,0 };
-    worldtransform.scale_ = { 100,1,100 };
-    //アフィン行列計算
-    Affin::UpdateRotateY(affinRotate, worldtransform);
-    Affin::UpdateTrans(affinTrans, worldtransform);
-    Affin::UpdateScale(affinScale, worldtransform);
-    Affin::UpdateMatrixWorld(affinScale,affinTrans, affinRotate, worldtransform);
-
-    worldtransform.TransferMatrix();
-
+    //床の初期化
+    floorTransform.Initialize();
+    floorTransform.translation_ = { -10,-1,0 };
+    floorTransform.scale_ = { 100,1,100 };
     
+
+    //壁の初期化
+    wallTransform.Initialize();
+    wallTransform.translation_ = { 60,0,40 };
+    wallTransform.scale_ = { 50,50,50 };
+
+    //アフィン行列計算
+    //床
+    Affin::UpdateRotateY(affinRotate, floorTransform);
+    Affin::UpdateTrans(affinTrans, floorTransform);
+    Affin::UpdateScale(affinScale, floorTransform);
+    Affin::UpdateMatrixWorld(affinScale, affinTrans, affinRotate, floorTransform);
+    floorTransform.TransferMatrix();
+
+    //壁
+    Affin::UpdateRotateY(affinRotate, wallTransform);
+    Affin::UpdateTrans(affinTrans, wallTransform);
+    Affin::UpdateScale(affinScale, wallTransform);
+    Affin::UpdateMatrixWorld(affinScale, affinTrans, affinRotate, wallTransform);
+    wallTransform.TransferMatrix();
+
+
 
 };
 
 
 void Floor::Draw(ViewProjection& viewProjection_) {
 
-    model_->Draw(worldtransform, viewProjection_, textureHandle_);
+    model_->Draw(floorTransform, viewProjection_, textureHandle_);
+    model_->Draw(wallTransform, viewProjection_, textureHandle_);
 
 };
-
