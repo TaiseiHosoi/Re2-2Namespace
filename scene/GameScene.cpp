@@ -88,12 +88,12 @@ void GameScene::Update() {
 		mag = 1.0f / eyeLen; //ベクトルの長さを1にする
 	};
 
-	eyePos.x *= mag;	
+	eyePos.x *= mag;	//magをかけると正規化される
 	eyePos.y *= mag;
 	eyePos.z *= mag;
 
-	for (int i = 0; i<cameraToPlayerDistance; i++) {	//1ずつ進むレイ
-		if (floor_->wallTransform.translation_.x - floor_->wallTransform.scale_.x <	//矩形の当たり判定
+	for (int i = 0; i<cameraToPlayerDistance; i++) {	//1ずつ進むレイを計算
+		if (floor_->wallTransform.translation_.x - floor_->wallTransform.scale_.x <	//壁の矩形の当たり判定
 			player_->worldTransform_.translation_.x + eyePos.x * i &&
 			floor_->wallTransform.translation_.x + floor_->wallTransform.scale_.x >
 			player_->worldTransform_.translation_.x + eyePos.x * i
@@ -116,7 +116,7 @@ void GameScene::Update() {
 	
 
 	viewProjection_.eye =	//ビュープロジェクションに代入
-	{ player_->worldTransform_.translation_.x + eyePos.x * cameraDistance,
+	{ player_->worldTransform_.translation_.x + eyePos.x * cameraDistance	,//自機から引いた位置にカメラをセット
 	20, //カメラの高さ20で固定
 	player_->worldTransform_.translation_.z + eyePos.z * cameraDistance };
 
