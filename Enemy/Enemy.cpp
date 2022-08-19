@@ -22,51 +22,14 @@ void Enemy::Initialize(Model* model, uint32_t& textureHandle)
 
 	// X,Y,Z方向スケーリング設定
 	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
-	worldTransform_.translation_ = { 2.0f, 1.0f, 6.0f };
+	worldTransform_.translation_ = { 2.0f, 1.0f, -20.0f };
 
 }
 
 void Enemy::Update()
 {
-	
 
-	//移動
-	Vector3 move = { 0.0f, 0.0f, 0.0f };
 
-	//視点の移動速さ
-	const float kEyeSpeed = 0.2f;
-
-	//押した方向で移動ベクトルを変更
-	/*if (input_->PushKey(DIK_I)) {
-		move += {0, kEyeSpeed, 0};
-	}
-	else if (input_->PushKey(DIK_K)) {
-		move -= {0, kEyeSpeed, 0};
-	}
-
-	if (input_->PushKey(DIK_J)) {
-		move += {-kEyeSpeed, 0, 0};
-	}
-	else if (input_->PushKey(DIK_L)) {
-		move += {kEyeSpeed, 0, 0};
-	}*/
-
-	move += {0, 0, -kEyeSpeed};
-
-	worldTransform_.translation_ += move;
-
-	//回転
-	Vector3 rotateY = { 0.0f,0.0f,0.0f };
-
-	const float kRotateSpeed = 0.1f;
-
-	/*if (input_->PushKey(DIK_E)) {
-		rotateY += {0, kRotateSpeed, 0};
-	}
-	else if (input_->PushKey(DIK_Q)) {
-		rotateY -= {0, kRotateSpeed, 0};
-	}
-	worldTransform_.rotation_ += rotateY;*/
 
 	//アフィン行列計算
 	Affin::UpdateRotateY(affinRotate, worldTransform_);
@@ -75,10 +38,43 @@ void Enemy::Update()
 
 	//アフィン行列転送
 	worldTransform_.TransferMatrix();
+
+	//敵の動きをswitchで切り替え
+	switch (phase_) {
+	case Phase::Approach:
+
+	default:
+		Approach();
+		break;
+
+	case Phase::Leave:
+		Leave();
+		break;
+	}
+
 }
 
 void Enemy::Draw(ViewProjection viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
+}
+
+
+//敵の挙動something
+void Enemy::Approach() {
+
+	//移動ベクトル
+	worldTransform_.translation_ += Vector3(0, 0, +kEnemyPhaseCharacterSpeed);
+
+	//既定の位置に到達したら離脱
+	if (worldTransform_.translation_.z > 0.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::Leave() {
+
+	//移動(ベクトルを加算)
+	worldTransform_.translation_ += Vector3(0, 0, -kEnemyPhaseCharacterSpeed);
 }

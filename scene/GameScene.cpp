@@ -69,14 +69,14 @@ void GameScene::Update() {
 
 	//デバッグ用表示
 #pragma region debugText
-	debugText_->SetPos(50, 70);
+	/*debugText_->SetPos(50, 70);
 	debugText_->Printf(
 		"target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
 		viewProjection_.target.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(
-		"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
+		"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);*/
 #pragma endregion 
 
 }

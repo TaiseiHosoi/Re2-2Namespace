@@ -1,6 +1,7 @@
 #include "DebugText.h"
 #include "Input.h"
 #include <Player.h>
+#include <Affin.h>
 
 void Player::Initialize(Model* model, uint32_t &textureHandle) {
 
@@ -89,8 +90,7 @@ void Player::Draw(ViewProjection viewProjection) {
 		bullet->Draw(viewProjection);
 	}
 
-	debugText_->SetPos(10, 200);
-	debugText_->Printf("%f,%f,%f", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
+	
 }
 
 void Player::Attack()

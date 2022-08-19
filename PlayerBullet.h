@@ -15,6 +15,7 @@
 
 class PlayerBullet
 {
+
 public:
 	
 
@@ -43,6 +44,7 @@ private:
 
 	//deathTimer
 	int32_t deathTimer_ = kLifeTime;
+
 	//deathFlag
 	bool isDead_ = false;
 
