@@ -62,6 +62,13 @@ void GameScene::Update() {
 	player_->Attack();
 
 
+<<<<<<< Updated upstream
+=======
+	viewProjection_.eye =	//ビュープロジェクションに代入
+	{ player_->worldTransform_.translation_.x + eyePos.x * cameraDistance,//自機から引いた位置にカメラをセット
+	20, //カメラの高さ20で固定
+	player_->worldTransform_.translation_.z + eyePos.z * cameraDistance };
+>>>>>>> Stashed changes
 
 
 	//行列の再計算
