@@ -62,7 +62,7 @@ void GameScene::Update() {
 
 	player_->Attack();
 
-
+	CheckAllCollisions();
 
 
 	//行列の再計算
@@ -135,4 +135,68 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollisions()
+{
+	//判定対象aとbの座標
+	Vector3 posA, posB;
+
+	//自機弾リストの取得
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullet = player_->GetBulletd();
+	//敵の弾リストの取得
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullet = enemy_->GetBulletd();
+
+#pragma region 自キャラと敵弾の当たり判定
+	//自キャラ座標
+	posA = player_->GetWorldPosition();
+
+	//自キャラと敵弾
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullet) {
+		posB = bullet.get()->GetWorldPosition();
+		
+		float x = posA.x - posB.x;
+		float y = posA.y - posB.y;
+		float z = posA.z - posB.z;
+
+		float distance = sqrt(x * x + y * y + z * z);
+
+		Matrix4 matA = player_->GetMatrix();
+		Matrix4 matB = bullet->GetMatrix();
+
+		//弾と弾の交差判定
+		if (distance < matA.m[0][0] + matB.m[0][0]) {	//スケールxを半径として使用
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+
+	}
+#pragma endregion
+
+
+#pragma region 自弾と敵キャラの当たり判定
+	//自キャラ座標
+	posA = enemy_->GetWorldPosition();
+
+	//自キャラと敵弾
+	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullet) {
+		posB = bullet.get()->GetWorldPosition();
+
+		float x = posA.x - posB.x;
+		float y = posA.y - posB.y;
+		float z = posA.z - posB.z;
+
+		float distance = sqrt(x * x + y * y + z * z);
+
+		Matrix4 matA = enemy_->GetMatrix();
+		Matrix4 matB = bullet->GetMatrix();
+
+		//弾と弾の交差判定
+		if (distance <= matA.m[0][0] + matB.m[0][0]) {	//スケールxを半径として使用
+			enemy_->OnCollision();
+			bullet->OnCollision();
+		}
+
+	}
+	#pragma endregion
 }

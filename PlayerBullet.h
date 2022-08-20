@@ -25,6 +25,12 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
+	void OnCollision();
+
+	Vector3 GetWorldPosition();
+
+	Matrix4 GetMatrix();
+
 private:
 	WorldTransform worldTransform_;
 

@@ -162,3 +162,12 @@ Vector3 Enemy::GetWorldPosition()
 		return worldPos;
 	
 }
+
+Matrix4 Enemy::GetMatrix()
+{
+	return worldTransform_.matWorld_;
+}
+
+void Enemy::OnCollision()
+{
+}

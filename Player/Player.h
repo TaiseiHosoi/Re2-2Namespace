@@ -31,6 +31,14 @@ class Player {
 
 	Vector3 GetWorldPosition();
 
+	void OnCollision();
+
+	//タマリストを取得
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBulletd() {
+		return bullets_;
+	}
+	Matrix4 GetMatrix();
+
   private:
 	WorldTransform worldTransform_;
 
@@ -54,5 +62,6 @@ class Player {
 	Matrix4 affinRotate = MathUtility::Matrix4Identity();
 	Matrix4 affinScale = MathUtility::Matrix4Identity();
 
+	
 
 };

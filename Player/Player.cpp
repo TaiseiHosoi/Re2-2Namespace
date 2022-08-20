@@ -125,3 +125,12 @@ Vector3 Player::GetWorldPosition()
 
 	return worldPos;
 }
+
+void Player::OnCollision()
+{
+}
+
+Matrix4 Player::GetMatrix()
+{
+	return worldTransform_.matWorld_;
+}

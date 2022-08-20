@@ -30,7 +30,7 @@ public:
 	void InitApproach();
 
 	void Leave();	//離脱
-	void InitLeave();
+	
 
 	void Fire();	//弾発射
 
@@ -50,6 +50,15 @@ public:
 
 	//ワールド座標取得
 	Vector3 GetWorldPosition();
+	Matrix4 GetMatrix();
+
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
+	//タマリストを取得
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBulletd() {
+		return bullets_;
+	}
 	
 private:
 	WorldTransform worldTransform_;
