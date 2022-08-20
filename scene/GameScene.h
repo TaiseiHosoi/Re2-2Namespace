@@ -12,6 +12,7 @@
 #include "WorldTransform.h"
 #include <DirectXMath.h>
 #include "Enemy.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -53,7 +54,8 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
-	DebugText* debugText_ = nullptr;
+	DebugText* debugText_ = nullptr;	
+	Skydome* skydome_ = nullptr;	//天球
 	uint32_t textureHandle_ = 0; //テクスチャハンドル
 	uint32_t textureHandle2_ = 0;
 	uint32_t soundDataHandle_ = 0;
@@ -69,6 +71,7 @@ private: // メンバ変数
 	Sprite* sprite_ = nullptr;
 	Model* model_ = nullptr;
 	Model* enemyModel_ = nullptr;
+	Model* modelSkydome_ = nullptr;
 
 	//ワールドトランスフォーム初期化
 	WorldTransform worldTransform_;
@@ -76,6 +79,8 @@ private: // メンバ変数
 
 	//ビュープロジェクション初期化
 	ViewProjection viewProjection_;
+
+	
 
 	/// <summary>
 	/// ゲームシーン用

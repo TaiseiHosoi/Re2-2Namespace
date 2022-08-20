@@ -93,7 +93,7 @@ void Enemy::Approach() {
 	worldTransform_.translation_ += Vector3(0, 0, +kEnemyPhaseCharacterSpeed);
 
 	//Šù’è‚ÌˆÊ’u‚É“’B‚µ‚½‚ç—£’E
-	if (worldTransform_.translation_.z > 0.0f) {
+	if (worldTransform_.translation_.z > 30.0f) {
 		phase_ = Phase::Leave;
 	}
 }

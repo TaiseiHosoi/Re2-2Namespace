@@ -14,6 +14,11 @@ GameScene::~GameScene() {
 	delete player_;
 
 	delete enemy_;
+
+	delete skydome_;
+
+	delete modelSkydome_;//ここまで
+
 }
 
 void GameScene::Initialize() {
@@ -44,6 +49,15 @@ void GameScene::Initialize() {
 	enemy_->Initialize(model_, textureHandle2_);
 
 	enemy_->SetPlayer(player_);
+
+	//天球生成
+	skydome_ = new Skydome();
+	//初期化
+	skydome_->Initialize();
+
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	
+
 	//音声再生
 	// audio_->PlayWave(soundDataHandle_);
 }
@@ -64,6 +78,8 @@ void GameScene::Update() {
 
 	CheckAllCollisions();
 
+	//自キャラの更新
+	skydome_->Update();
 
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
@@ -112,6 +128,8 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 
 	enemy_->Draw(viewProjection_);
+
+	skydome_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
