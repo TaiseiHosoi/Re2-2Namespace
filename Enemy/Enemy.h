@@ -16,6 +16,9 @@
 #include"EnemyBullet.h"
 #include"memory"
 #include "list"
+#include"Player.h"
+
+class Player;
 
 class Enemy {
 public:
@@ -32,6 +35,10 @@ public:
 	void Fire();	//弾発射
 
 	void BulletClean();
+
+	void SetPlayer(Player* player){
+		player_ = player;
+		}
 	
 	enum class Phase {
 		Approach,	//接近
@@ -41,6 +48,9 @@ public:
 	//玉のインターバル
 	static const int kFireInterval = 30;
 
+	//ワールド座標取得
+	Vector3 GetWorldPosition();
+	
 private:
 	WorldTransform worldTransform_;
 
@@ -79,5 +89,9 @@ private:
 
 	//発射タイマー
 	int32_t bFireTimer = 0;
+
+	//自機
+	Player* player_ = nullptr;
+	
 
 };

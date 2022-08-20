@@ -43,6 +43,7 @@ void GameScene::Initialize() {
 
 	enemy_->Initialize(model_, textureHandle2_);
 
+	enemy_->SetPlayer(player_);
 	//音声再生
 	// audio_->PlayWave(soundDataHandle_);
 }

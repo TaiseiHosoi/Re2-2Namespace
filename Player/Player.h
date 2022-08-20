@@ -29,6 +29,8 @@ class Player {
 
 	void Attack();
 
+	Vector3 GetWorldPosition();
+
   private:
 	WorldTransform worldTransform_;
 
