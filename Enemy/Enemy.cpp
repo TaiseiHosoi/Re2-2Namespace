@@ -24,6 +24,8 @@ void Enemy::Initialize(Model* model, uint32_t& textureHandle)
 	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
 	worldTransform_.translation_ = { 2.0f, 1.0f, -20.0f };
 
+	InitApproach();
+
 }
 
 void Enemy::Update()
@@ -52,18 +54,39 @@ void Enemy::Update()
 		break;
 	}
 
+	//弾更新
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
+		bullet->Update();
+	}
+	
 }
 
 void Enemy::Draw(ViewProjection viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
+	//弾描画
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
+		bullet->Draw(viewProjection);
+	}
 }
-
 
 //敵の挙動something
 void Enemy::Approach() {
 
+	BulletClean();
+
+	//発射タイマーのカウントダウン
+	bFireTimer--;
+	//指定時間に達した
+	if (bFireTimer <= 0) {
+		//弾を発射
+		Fire();
+		//発射タイマー初期化
+		bFireTimer = kFireInterval;
+	}
+	
+	/////////////////↑弾の発射↑/////////////////
+	
 	//移動ベクトル
 	worldTransform_.translation_ += Vector3(0, 0, +kEnemyPhaseCharacterSpeed);
 
@@ -73,8 +96,44 @@ void Enemy::Approach() {
 	}
 }
 
+void Enemy::InitApproach()
+{
+	bFireTimer = kFireInterval;
+}
+
 void Enemy::Leave() {
+	BulletClean();
 
 	//移動(ベクトルを加算)
 	worldTransform_.translation_ += Vector3(0, 0, -kEnemyPhaseCharacterSpeed);
+
+	//既定の位置に到達したら離脱
+	if(worldTransform_.translation_.z < -30.0f) {
+		phase_ = Phase::Approach;
+	}
+}
+
+void Enemy::Fire() {
+
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity(0, 0, -kBulletSpeed);
+
+	//速度ベクトルを自機の向きに回転させる
+	Affin::VectorUpdate(velocity, worldTransform_);
+
+	//弾を生成し初期化
+	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+	//弾を登録
+	bullets_.push_back(std::move(newBullet));
+
+}
+
+void Enemy::BulletClean()
+{
+	//デスフラグが立った弾を削除
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
+		return bullet->IsDead();
+	});
 }

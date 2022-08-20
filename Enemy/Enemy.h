@@ -13,7 +13,7 @@
 #include <DirectXMath.h>
 #include <d3d12.h>
 #include <wrl.h>
-#include"PlayerBullet.h"
+#include"EnemyBullet.h"
 #include"memory"
 #include "list"
 
@@ -23,13 +23,23 @@ public:
 	void Update();
 	void Draw(ViewProjection viewProjection);
 
-	void Approach();
-	void Leave();
+	void Approach();	//接近
+	void InitApproach();
+
+	void Leave();	//離脱
+	void InitLeave();
+
+	void Fire();	//弾発射
+
+	void BulletClean();
 	
 	enum class Phase {
 		Approach,	//接近
 		Leave,	//離脱
 	};
+
+	//玉のインターバル
+	static const int kFireInterval = 30;
 
 private:
 	WorldTransform worldTransform_;
@@ -45,7 +55,8 @@ private:
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
-	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	Matrix4 matVelocity = MathUtility::Matrix4Identity();	//velocity専用行列	
 
 	Vector3 transPos = { 0, 0, 0 };
@@ -65,4 +76,8 @@ private:
 
 	//フェーズの速さ
 	const float kEnemyPhaseCharacterSpeed = 0.1f;
+
+	//発射タイマー
+	int32_t bFireTimer = 0;
+
 };

@@ -28,8 +28,8 @@ void Player::Initialize(Model* model, uint32_t &textureHandle) {
 
 void Player::Update() {
 
-	//bulletDelete
-	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) {
+		//bulletDelete
+		bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) {
 		return bullet->IsDead();
 		});
 
@@ -57,7 +57,7 @@ void Player::Update() {
 		//‰ñ“]
 		Vector3 rotateY = { 0.0f,0.0f,0.0f };
 
-		const float kRotateSpeed = 0.1f;
+		const float kRotateSpeed = 0.01f;
 		if (input_->PushKey(DIK_E)) {
 			rotateY += {0, kRotateSpeed, 0};
 		}
@@ -89,7 +89,7 @@ void Player::Draw(ViewProjection viewProjection) {
 	for(std::unique_ptr<PlayerBullet>& bullet:bullets_) {
 		bullet->Draw(viewProjection);
 	}
-
+	
 	
 }
 
