@@ -19,7 +19,7 @@ namespace Affin
 
 	void UpdateRotateY(Matrix4& matRotateY, WorldTransform& worldTransform_);
 
-	void UpdateMatrixWorld(Matrix4& matTrans, Matrix4& matRotateY,WorldTransform& worldTransform_);
+	void UpdateMatrixWorld(Matrix4& matScale,Matrix4& matTrans, Matrix4& matRotateY,WorldTransform& worldTransform_);
 
 	void VectorUpdate(Vector3& vec, WorldTransform& worldTransform_);
 
