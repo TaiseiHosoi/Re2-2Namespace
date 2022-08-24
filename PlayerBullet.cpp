@@ -21,7 +21,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position ,const Vecto
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 
 	Affin::UpdateTrans(matTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(matTrans, matRotate, worldTransform_);
+	Affin::UpdateMatrixWorld(matScale,matTrans, matRotate, worldTransform_);
 
 	worldTransform_.TransferMatrix();
 
@@ -44,7 +44,7 @@ void PlayerBullet::Update()
 	//アフィン行列計算
 	Affin::UpdateRotateY(matRotate, worldTransform_);
 	Affin::UpdateTrans(matTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(matTrans, matRotate, worldTransform_);
+	Affin::UpdateMatrixWorld(matScale,matTrans, matRotate, worldTransform_);
 
 	worldTransform_.TransferMatrix();
 

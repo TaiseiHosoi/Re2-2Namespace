@@ -52,10 +52,10 @@ void GameScene::Initialize() {
 
 	//天球生成
 	skydome_ = new Skydome();
-	//初期化
-	skydome_->Initialize();
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+
+	skydome_->Initialize(modelSkydome_);
 	
 
 	//音声再生
@@ -124,6 +124,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	skydome_->Draw(viewProjection_);
 
 	player_->Draw(viewProjection_);
 
