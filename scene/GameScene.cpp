@@ -52,18 +52,18 @@ void GameScene::Initialize() {
 
 	//天球生成
 	skydome_ = new Skydome();
-	//初期化
-	skydome_->Initialize();
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
-	
+
+	skydome_->Initialize(modelSkydome_);
+
 
 	//音声再生
 	// audio_->PlayWave(soundDataHandle_);
 }
 
 void GameScene::Update() {
-	
+
 
 	//自キャラの更新
 	player_->Update();
@@ -124,6 +124,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	skydome_->Draw(viewProjection_);
 
 	player_->Draw(viewProjection_);
 
@@ -172,7 +173,7 @@ void GameScene::CheckAllCollisions()
 	//自キャラと敵弾
 	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullet) {
 		posB = bullet.get()->GetWorldPosition();
-		
+
 		float x = posA.x - posB.x;
 		float y = posA.y - posB.y;
 		float z = posA.z - posB.z;
@@ -216,5 +217,5 @@ void GameScene::CheckAllCollisions()
 		}
 
 	}
-	#pragma endregion
+#pragma endregion
 }

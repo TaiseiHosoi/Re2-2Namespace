@@ -21,7 +21,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 
 	Affin::UpdateTrans(matTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(matTrans, matRotate, worldTransform_);
+	Affin::UpdateMatrixWorld(matScale, matTrans, matRotate, worldTransform_);
 
 	worldTransform_.TransferMatrix();
 
@@ -44,7 +44,7 @@ void EnemyBullet::Update()
 	//アフィン行列計算
 	Affin::UpdateRotateY(matRotate, worldTransform_);
 	Affin::UpdateTrans(matTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(matTrans, matRotate, worldTransform_);
+	Affin::UpdateMatrixWorld(matScale, matTrans, matRotate, worldTransform_);
 
 	worldTransform_.TransferMatrix();
 

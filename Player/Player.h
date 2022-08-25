@@ -20,7 +20,7 @@
 
 class Player {
 
-  public:
+public:
 	void Initialize(Model* model, uint32_t& textureHandle);
 
 	void Update();
@@ -39,7 +39,7 @@ class Player {
 	}
 	Matrix4 GetMatrix();
 
-  private:
+private:
 	WorldTransform worldTransform_;
 
 	Model* model_ = nullptr;
@@ -56,12 +56,12 @@ class Player {
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 	Matrix4 matVelocity = MathUtility::Matrix4Identity();	//velocityêÍópçsóÒ	
 
-	Vector3 transPos = {0, 0, 0};
+	Vector3 transPos = { 0, 0, 0 };
 
 	Matrix4 affinTrans = MathUtility::Matrix4Identity();
 	Matrix4 affinRotate = MathUtility::Matrix4Identity();
 	Matrix4 affinScale = MathUtility::Matrix4Identity();
 
-	
+
 
 };

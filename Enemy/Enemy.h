@@ -30,16 +30,16 @@ public:
 	void InitApproach();
 
 	void Leave();	//ó£íE
-	
+
 
 	void Fire();	//íeî≠éÀ
 
 	void BulletClean();
 
-	void SetPlayer(Player* player){
+	void SetPlayer(Player* player) {
 		player_ = player;
-		}
-	
+	}
+
 	enum class Phase {
 		Approach,	//ê⁄ãﬂ
 		Leave,	//ó£íE
@@ -59,7 +59,7 @@ public:
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBulletd() {
 		return bullets_;
 	}
-	
+
 private:
 	WorldTransform worldTransform_;
 
@@ -101,6 +101,6 @@ private:
 
 	//é©ã@
 	Player* player_ = nullptr;
-	
+
 
 };
