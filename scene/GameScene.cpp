@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <cassert>
 #include <random>
+#include"Vector3.h"
 
 using namespace DirectX;
 
@@ -17,7 +18,9 @@ GameScene::~GameScene() {
 
 	delete skydome_;
 
-	delete modelSkydome_;//ここまで
+	delete modelSkydome_;
+
+	delete railCamera_;
 
 }
 
@@ -27,8 +30,7 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
-
-
+	debugCamera_ = new DebugCamera(1280,780);
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	textureHandle2_ = TextureManager::Load("block.png");
@@ -57,6 +59,14 @@ void GameScene::Initialize() {
 
 	skydome_->Initialize(modelSkydome_);
 
+	//レールカメラ
+	railCamera_ = new RailCamera();
+	cameraTransform.Initialize();
+	cameraTransform.rotation_ = { 0,0,0 };
+	cameraTransform.translation_ = { 0,0,-50 };
+
+
+	railCamera_->Initialize(cameraTransform);
 
 	//音声再生
 	// audio_->PlayWave(soundDataHandle_);
@@ -64,9 +74,15 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 
+	
+
+	player_->SetWorldTransformPair(railCamera_->GetWorldTransform());
 
 	//自キャラの更新
 	player_->Update();
+	
+	//レールカメラ更新
+	railCamera_->Update();
 
 	//敵キャラの更新
 	enemy_->Update();
@@ -81,19 +97,22 @@ void GameScene::Update() {
 	//自キャラの更新
 	skydome_->Update();
 
+	
 	//行列の再計算
 	viewProjection_.UpdateMatrix();
 
+	
+
 	//デバッグ用表示
 #pragma region debugText
-	/*debugText_->SetPos(50, 70);
+	debugText_->SetPos(50, 70);
 	debugText_->Printf(
 		"target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
 		viewProjection_.target.z);
 
 	debugText_->SetPos(50, 90);
 	debugText_->Printf(
-		"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);*/
+		"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 #pragma endregion 
 
 }
@@ -124,13 +143,13 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	skydome_->Draw(viewProjection_);
+	skydome_->Draw(railCamera_->GetViewProjection());
 
-	player_->Draw(viewProjection_);
+	player_->Draw(railCamera_->GetViewProjection());
 
-	enemy_->Draw(viewProjection_);
+	enemy_->Draw(railCamera_->GetViewProjection());
 
-	skydome_->Draw(viewProjection_);
+	skydome_->Draw(railCamera_->GetViewProjection());
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

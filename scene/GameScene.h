@@ -13,7 +13,8 @@
 #include <DirectXMath.h>
 #include "Enemy.h"
 #include "Skydome.h"
-//#include "RailCamera.h"
+#include "RailCamera.h"
+#include "DebugCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -57,7 +58,9 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 	Skydome* skydome_ = nullptr;	//天球
-	//RailCamera* railCamera = nullptr;	//レールカメラ
+	RailCamera* railCamera_ = nullptr;	//レールカメラ
+	WorldTransform cameraTransform;	//カメラ用のトランスフォーム
+	DebugCamera* debugCamera_ = nullptr;	//デバッグカメラ
 
 	uint32_t textureHandle_ = 0; //テクスチャハンドル
 	uint32_t textureHandle2_ = 0;

@@ -33,11 +33,17 @@ public:
 
 	void OnCollision();
 
-	//タマリストを取得
+	//弾リストを取得
 	const std::list<std::unique_ptr<PlayerBullet>>& GetBulletd() {
 		return bullets_;
 	}
-	Matrix4 GetMatrix();
+
+	Matrix4 GetMatrix();	//行列取得用
+
+	void SetWorldTransformPair(WorldTransform* worldTransform);
+
+	
+
 
 private:
 	WorldTransform worldTransform_;
@@ -57,6 +63,8 @@ private:
 	Matrix4 matVelocity = MathUtility::Matrix4Identity();	//velocity専用行列	
 
 	Vector3 transPos = { 0, 0, 0 };
+
+	
 
 	Matrix4 affinTrans = MathUtility::Matrix4Identity();
 	Matrix4 affinRotate = MathUtility::Matrix4Identity();

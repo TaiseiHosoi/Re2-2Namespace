@@ -22,7 +22,7 @@ void Player::Initialize(Model* model, uint32_t& textureHandle) {
 
 	// X,Y,Z方向スケーリング設定
 	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
-	worldTransform_.translation_ = { 1.0f, 1.0f, 1.0f };
+	worldTransform_.translation_ = { 1.0f, 1.0f, 20.0f };
 
 }
 
@@ -72,6 +72,9 @@ void Player::Update() {
 	Affin::UpdateRotateY(affinRotate, worldTransform_);
 	Affin::UpdateTrans(affinTrans, worldTransform_);
 	Affin::UpdateMatrixWorld(affinScale, affinTrans, affinRotate, worldTransform_);
+
+	//ペアレント先更新
+	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
 
 	//アフィン行列転送
 	worldTransform_.TransferMatrix();
@@ -136,3 +139,9 @@ Matrix4 Player::GetMatrix()
 {
 	return worldTransform_.matWorld_;
 }
+
+void Player::SetWorldTransformPair(WorldTransform* worldTransform)
+{
+	worldTransform_.parent_ = worldTransform;
+}
+
