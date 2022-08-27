@@ -105,12 +105,19 @@ void Player::Attack()
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
 
+		
 		//速度ベクトルを自機の向きに回転させる
 		Affin::VectorUpdate(velocity, worldTransform_);
 
+
+		Vector3 worldPos =	//初期値用ワールド座標取得
+		{ worldTransform_.matWorld_.m[3][0],
+			worldTransform_.matWorld_.m[3][1],
+			worldTransform_.matWorld_.m[3][2] };
+
 		//弾を生成し初期化
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initialize(model_,worldPos, velocity);
 
 		//弾を登録
 		bullets_.push_back(std::move(newBullet));

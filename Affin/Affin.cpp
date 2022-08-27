@@ -85,6 +85,7 @@ void Affin::VectorUpdate(Vector3& vec ,WorldTransform& worldTransform_)
 	};
 
 	matVec *= matRotateY;
+	worldTransform_.matWorld_ *= matVec;
 
 	vec.x = matVec.m[3][0];
 	vec.y = matVec.m[3][1];
