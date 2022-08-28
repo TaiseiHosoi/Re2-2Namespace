@@ -15,6 +15,15 @@
 #include "Skydome.h"
 #include "RailCamera.h"
 #include "DebugCamera.h"
+#include "EnemyBullet.h"
+#include "PlayerBullet.h"
+#include <sstream>
+#include <fstream>
+#include <ostream>
+#include <stdio.h>
+#include <iostream>
+
+
 
 /// <summary>
 /// ゲームシーン
@@ -52,6 +61,36 @@ public: // メンバ関数
 	/// </summary>
 	void CheckAllCollisions();
 
+	/// <summary>
+	/// 敵弾を追加する
+	/// </summary>
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet>enemyBullet);
+
+	void InitEnemy();
+	//タマリストを取得
+	const std::list<std::unique_ptr<EnemyBullet>>& GetEnemyBullet() {
+		return enemyBullets_;
+	}
+	const std::list<std::unique_ptr<PlayerBullet>>& GetPlayerBullet() {
+		return playerBullets_;
+	}
+
+	//リムーブ
+	void BulletClean();
+
+	//敵発生コマンド
+	void LoadEnemyPopData();
+	void UpdateEnemyPopCommands();
+
+
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
+
+	//敵生成
+	void SponeEnemy(Vector3 EnemyPos);
+
+	
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -66,9 +105,14 @@ private: // メンバ変数
 	uint32_t textureHandle2_ = 0;
 	uint32_t soundDataHandle_ = 0;
 	uint32_t voiceHandle_ = 0;
-	//自キャラ
+	//キャラ
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
+	std::list<std::unique_ptr<Enemy>> enemys_;	//敵のリスト作成
+
+	//弾
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+	std::list<std::unique_ptr<PlayerBullet>> playerBullets_;
 
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
@@ -85,6 +129,11 @@ private: // メンバ変数
 
 	//ビュープロジェクション初期化
 	ViewProjection viewProjection_;
+
+	//待ち時間フラグ用変数
+	bool isWait_;
+	int waitTimer_;
+
 
 
 

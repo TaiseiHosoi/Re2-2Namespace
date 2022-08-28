@@ -111,7 +111,7 @@ void Player::Attack()
 
 
 		Vector3 worldPos =	//初期値用ワールド座標取得
-		{ worldTransform_.matWorld_.m[3][0],
+		{	worldTransform_.matWorld_.m[3][0],
 			worldTransform_.matWorld_.m[3][1],
 			worldTransform_.matWorld_.m[3][2] };
 

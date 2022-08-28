@@ -1,8 +1,10 @@
 #include "Enemy.h"
 #include "DebugText.h"
 #include "Input.h"
+#include"Player.h"
+#include"GameScene.h"
 
-void Enemy::Initialize(Model* model, uint32_t& textureHandle)
+void Enemy::Initialize(Model* model, uint32_t& textureHandle,Vector3 Pos)
 {
 
 	// nullcheck
@@ -22,7 +24,7 @@ void Enemy::Initialize(Model* model, uint32_t& textureHandle)
 
 	// X,Y,Z方向スケーリング設定
 	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
-	worldTransform_.translation_ = { 2.0f, 1.0f, -20.0f };
+	worldTransform_.translation_ = Pos;
 
 	InitApproach();
 
@@ -56,20 +58,14 @@ void Enemy::Update()
 		break;
 	}
 
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
-		bullet->Update();
-	}
+	
 
 }
 
 void Enemy::Draw(ViewProjection viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	//弾描画
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
+	
 }
 
 //敵の挙動something
@@ -137,16 +133,17 @@ void Enemy::Fire() {
 	newBullet->Initialize(model_, worldTransform_.translation_, normalizeVec);
 
 	//弾を登録
-	bullets_.push_back(std::move(newBullet));
+	//bullets_.push_back(std::move(newBullet));
+	gameScene_->AddEnemyBullet(std::move(newBullet));
 
 }
 
 void Enemy::BulletClean()
 {
-	//デスフラグが立った弾を削除
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-		return bullet->IsDead();
-		});
+	////デスフラグが立った弾を削除
+	//bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
+	//	return bullet->IsDead();
+	//	});
 }
 
 Vector3 Enemy::GetWorldPosition()
@@ -170,4 +167,5 @@ Matrix4 Enemy::GetMatrix()
 
 void Enemy::OnCollision()
 {
+	isDead_ = true;
 }

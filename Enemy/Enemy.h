@@ -16,13 +16,15 @@
 #include"EnemyBullet.h"
 #include"memory"
 #include "list"
-#include"Player.h"
+
 
 class Player;
+class GameScene;
 
 class Enemy {
+
 public:
-	void Initialize(Model* model, uint32_t& textureHandle);
+	void Initialize(Model* model, uint32_t& textureHandle,Vector3 Pos);
 	void Update();
 	void Draw(ViewProjection viewProjection);
 
@@ -36,9 +38,14 @@ public:
 
 	void BulletClean();
 
-	void SetPlayer(Player* player) {
+	void SetPlayer(Player* player) {	//このクラスのメンバ変数セット
 		player_ = player;
 	}
+
+	void SetGameScene(GameScene* gameScene) {	//このクラスのメンバ変数セット
+		gameScene_ = gameScene;
+	}
+
 
 	enum class Phase {
 		Approach,	//接近
@@ -54,11 +61,12 @@ public:
 
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
+	bool Dead() const { return isDead_; }
 
-	//タマリストを取得
-	const std::list<std::unique_ptr<EnemyBullet>>& GetBulletd() {
-		return bullets_;
-	}
+	////タマリストを取得
+	//const std::list<std::unique_ptr<EnemyBullet>>& GetBulletd() {
+	//	return bullets_;
+	//}
 
 private:
 	WorldTransform worldTransform_;
@@ -75,7 +83,7 @@ private:
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
-	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	
 	Matrix4 matVelocity = MathUtility::Matrix4Identity();	//velocity専用行列	
 
 	Vector3 transPos = { 0, 0, 0 };
@@ -99,8 +107,13 @@ private:
 	//発射タイマー
 	int32_t bFireTimer = 0;
 
+	//↓参照するよう
 	//自機
 	Player* player_ = nullptr;
+	//ゲームシーン
+	GameScene* gameScene_ = nullptr;
 
+	//デスフラグ
+	bool isDead_ = false;
 
 };
