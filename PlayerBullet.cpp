@@ -20,11 +20,6 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 
-	Affin::UpdateTrans(matTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(matScale, matTrans, matRotate, worldTransform_);
-
-	worldTransform_.TransferMatrix();
-
 	//引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
 }
@@ -37,14 +32,10 @@ void PlayerBullet::Update()
 	}
 
 
-
 	//座標を移動させる
 	worldTransform_.translation_ += velocity_;
 
-	//アフィン行列計算
-	Affin::UpdateRotateY(matRotate, worldTransform_);
-	Affin::UpdateTrans(matTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(matScale, matTrans, matRotate, worldTransform_);
+	Affin::AffinUpdate(worldTransform_);
 
 	worldTransform_.TransferMatrix();
 

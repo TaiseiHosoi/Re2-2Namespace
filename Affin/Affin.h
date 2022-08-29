@@ -23,5 +23,18 @@ namespace Affin
 
 	void VectorUpdate(Vector3& vec, WorldTransform& worldTransform_);
 
+	void VectorTransUpdate(Vector3& vec, WorldTransform& worldTransform_);
+
+	void MatVec(Vector3& vector3, WorldTransform& worldTransform_);
+
+	Vector3 GetVecTrans(Matrix4& mat);
+
+	Matrix4 GetMatTrans(Vector3& vec);
+
+	void AffinUpdate(WorldTransform& worldTransform);	//worldtransformのローカル値で更新が完結できる
+
+	Vector3 AddVector(const Vector3& vec1, const Vector3& vec2);
+
+	Vector3 WDiv(Vector3& vec, Matrix4& Mat);
 };
 

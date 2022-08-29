@@ -23,7 +23,7 @@ class Player {
 public:
 	void Initialize(Model* model, uint32_t& textureHandle);
 
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 
 	void Draw(ViewProjection viewProjection);
 
@@ -42,7 +42,7 @@ public:
 
 	void SetWorldTransformPair(WorldTransform* worldTransform);
 
-	
+	void DrawUI();
 
 
 private:
@@ -64,12 +64,17 @@ private:
 
 	Vector3 transPos = { 0, 0, 0 };
 
-	
+	//3Dレティクル用worldトランスフォーム
+	WorldTransform worldTransform3DReticle_;
 
+	
+	//自機用
 	Matrix4 affinTrans = MathUtility::Matrix4Identity();
 	Matrix4 affinRotate = MathUtility::Matrix4Identity();
 	Matrix4 affinScale = MathUtility::Matrix4Identity();
 
+	//2Dレティクルスプライト用
+	std::unique_ptr<Sprite> sprite2DReticle_;
 
 
 };

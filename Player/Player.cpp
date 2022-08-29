@@ -2,6 +2,8 @@
 #include "Input.h"
 #include <Player.h>
 #include <Affin.h>
+#include "MathUtility.h"
+using namespace MathUtility;
 
 void Player::Initialize(Model* model, uint32_t& textureHandle) {
 
@@ -24,9 +26,19 @@ void Player::Initialize(Model* model, uint32_t& textureHandle) {
 	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
 	worldTransform_.translation_ = { 1.0f, 1.0f, 20.0f };
 
+	//3Dレティクルの初期化
+	worldTransform3DReticle_.Initialize();
+
+	//レティクル用テクスチャ
+	uint32_t textureReticle = TextureManager::Load("reticle3.png");
+
+	//スプライト生成
+	sprite2DReticle_.reset(Sprite::Create(textureReticle, Vector2(200,100), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+
 }
 
-void Player::Update() {
+void Player::Update(const ViewProjection& viewProjection) {
+
 
 	//bulletDelete
 	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) {
@@ -69,9 +81,7 @@ void Player::Update() {
 	worldTransform_.rotation_ += rotateY;
 
 	//アフィン行列計算
-	Affin::UpdateRotateY(affinRotate, worldTransform_);
-	Affin::UpdateTrans(affinTrans, worldTransform_);
-	Affin::UpdateMatrixWorld(affinScale, affinTrans, affinRotate, worldTransform_);
+	Affin::AffinUpdate(worldTransform_);
 
 	//ペアレント先更新
 	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
@@ -85,6 +95,49 @@ void Player::Update() {
 	}
 
 
+#pragma region レティクル更新
+	//自機から3Dレティクルの距離
+	const float kDistancePlayerTo3DReticle = 50.0f;
+	//自機から3Dレティクルへのオフセットz向き
+	Vector3 offset = { 0,0,1.0f };
+	//自機のworld行列の回転を反映
+	Affin::MatVec(offset, worldTransform_);
+	//offset長さ調節
+	offset = MathUtility::Vector3Normalize(offset) *  kDistancePlayerTo3DReticle;
+	//3Dレティクル座標設定
+	Vector3 getWorldMat = Affin::GetVecTrans(worldTransform_.matWorld_);
+	worldTransform3DReticle_.translation_ = Affin::AddVector(Affin::GetVecTrans(worldTransform_.matWorld_), offset);
+
+	//行列更新
+	Affin::AffinUpdate(worldTransform3DReticle_);
+	worldTransform3DReticle_.TransferMatrix();
+
+
+#pragma endregion
+
+#pragma region 3Dレティクルへの座標変換
+	Vector3 positionReticle = Affin::GetVecTrans(worldTransform3DReticle_.matWorld_);
+
+	Vector2 windowWH = Vector2(WinApp::GetInstance()->kWindowWidth, WinApp::GetInstance()->kWindowHeight);
+
+	//ビューポート行列
+	Matrix4 Viewport =
+	{ windowWH.x / 2,0,0,0,
+	0,-windowWH.y / 2,0,0,
+	0,0,1,0,
+	windowWH.x / 2, windowWH.y / 2,0,1 };
+
+	//ビュー行列とプロジェクション行列,ビューポート行列を合成する
+	Matrix4 matViewProjectionViewport = viewProjection.matView * viewProjection.matProjection * Viewport;
+
+	//ワールド→スクリーン座標変換(ここで3D～2Dになる)
+	positionReticle = Affin::WDiv(positionReticle, matViewProjectionViewport);
+
+	//スプライトのレティクルに座業設定
+	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+
+
+#pragma endregion
 }
 
 void Player::Draw(ViewProjection viewProjection) {
@@ -95,6 +148,12 @@ void Player::Draw(ViewProjection viewProjection) {
 		bullet->Draw(viewProjection);
 	}
 
+	//model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);
+
+
+	debugText_->SetPos(50, 110);
+	debugText_->Printf(
+		"reticle:(%f,%f,%f)", worldTransform3DReticle_.matWorld_.m[3][0], worldTransform3DReticle_.matWorld_.m[3][1], worldTransform3DReticle_.matWorld_.m[3][2]);
 
 }
 
@@ -104,16 +163,21 @@ void Player::Attack()
 
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
+		/*velocity = Affin::GetVecTrans(worldTransform3DReticle_.matWorld_)  - Affin::GetVecTrans(worldTransform_.matWorld_);
+		MathUtility::Vector3Normalize(velocity);
+		velocity *= kBulletSpeed;*/
 
-		
+
 		//速度ベクトルを自機の向きに回転させる
-		Affin::VectorUpdate(velocity, worldTransform_);
-
+		Affin::MatVec(velocity, worldTransform_);
+		
+		
 
 		Vector3 worldPos =	//初期値用ワールド座標取得
 		{	worldTransform_.matWorld_.m[3][0],
 			worldTransform_.matWorld_.m[3][1],
-			worldTransform_.matWorld_.m[3][2] };
+			worldTransform_.matWorld_.m[3][2] 
+		};
 
 		//弾を生成し初期化
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
@@ -150,5 +214,10 @@ Matrix4 Player::GetMatrix()
 void Player::SetWorldTransformPair(WorldTransform* worldTransform)
 {
 	worldTransform_.parent_ = worldTransform;
+}
+
+void Player::DrawUI()
+{
+	sprite2DReticle_->Draw();
 }
 

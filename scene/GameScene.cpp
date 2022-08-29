@@ -73,6 +73,9 @@ void GameScene::Initialize() {
 	//ポップデータcsv読み込み
 	LoadEnemyPopData();
 
+	//レティクルテクスチャ
+	TextureManager::Load("reticle3.png");
+
 	//音声再生
 	// audio_->PlayWave(soundDataHandle_);
 }
@@ -83,7 +86,7 @@ void GameScene::Update() {
 	player_->SetWorldTransformPair(railCamera_->GetWorldTransform());
 
 	//自キャラの更新
-	player_->Update();
+	player_->Update(railCamera_->GetViewProjection());
 
 	//レールカメラ更新
 	railCamera_->Update();
@@ -106,7 +109,7 @@ void GameScene::Update() {
 
 
 	//転送用の座標
-	Vector3 position = worldTransform_.translation_;
+	//Vector3 position = worldTransform_.translation_;
 
 	player_->Attack();
 
@@ -212,6 +215,7 @@ void GameScene::Draw() {
 
 
 
+	player_->DrawUI();
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
