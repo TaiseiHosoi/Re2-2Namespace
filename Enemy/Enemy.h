@@ -53,7 +53,7 @@ public:
 	};
 
 	//玉のインターバル
-	static const int kFireInterval = 30;
+	static const int kFireInterval = 100;
 
 	//ワールド座標取得
 	Vector3 GetWorldPosition();
@@ -115,5 +115,6 @@ private:
 
 	//デスフラグ
 	bool isDead_ = false;
+	int deathPoint = 0;
 
 };

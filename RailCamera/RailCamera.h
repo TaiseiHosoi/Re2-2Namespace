@@ -5,6 +5,8 @@
 #include"Affin.h"
 #include "Input.h"
 #include "DebugText.h"
+#include"Vector3.h"
+
 class RailCamera {
 public:
 	//‰Šú‰»

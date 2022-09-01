@@ -3,6 +3,7 @@
 #include <Player.h>
 #include <Affin.h>
 #include "MathUtility.h"
+
 using namespace MathUtility;
 
 void Player::Initialize(Model* model, uint32_t& textureHandle) {
@@ -24,7 +25,7 @@ void Player::Initialize(Model* model, uint32_t& textureHandle) {
 
 	// X,Y,Z方向スケーリング設定
 	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
-	worldTransform_.translation_ = { 1.0f, 1.0f, 20.0f };
+	worldTransform_.translation_ = { 0.0f, 0.0f, 0.0f };
 
 	//3Dレティクルの初期化
 	worldTransform3DReticle_.Initialize();
@@ -38,6 +39,8 @@ void Player::Initialize(Model* model, uint32_t& textureHandle) {
 }
 
 void Player::Update(const ViewProjection& viewProjection) {
+	//前フレーム
+	oldQuadrant = Quadrant;
 
 
 	//bulletDelete
@@ -45,40 +48,264 @@ void Player::Update(const ViewProjection& viewProjection) {
 		return bullet->IsDead();
 		});
 
+
+
+
+	//回転
+	Vector3 rotate = { 0.0f,0.0f,0.0f };
+
+	const float kRotateSpeed = 0.01f;
+	if (input_->PushKey(DIK_S)) {
+		rotate += {kRotateSpeed, 0, 0};
+	}
+	else if (input_->PushKey(DIK_W)) {
+		rotate -= {kRotateSpeed, 0, 0};
+	}
+	if (input_->PushKey(DIK_A)) {
+	}
+	else if (input_->PushKey(DIK_D)) {
+	}
+
+	worldTransform_.rotation_ += rotate;
+
 	//移動
 	Vector3 move = { 0.0f, 0.0f, 0.0f };
 
 	//視点の移動速さ
 	const float kEyeSpeed = 0.2f;
 
+	if (unitAngle > 360.0f) {
+		unitAngle -= 360.0f;
+	}
+	else if (unitAngle < 0.0f) {
+		unitAngle += 360.0f;
+	}
+
+	if (worldTransform_.rotation_.x > 0.3f) {
+		worldTransform_.rotation_.x = 0.3f;
+	}
+	else if (worldTransform_.rotation_.x < -0.3f) {
+		worldTransform_.rotation_.x = -0.3f;
+	}
+
 	//押した方向で移動ベクトルを変更
+
 	if (input_->PushKey(DIK_W)) {
-		move += {0, kEyeSpeed, 0};
+		/*if (unitLen < 10) {
+			unitLen+= 1.0f;
+		}
+		if (isPush == false) {
+			isPush = true;
+			unitAngle = 0.0f;
+		}*/
+
+		/*if(unitAngle < 350.0f && unitAngle > 10)
+		if (Quadrant == 1) {
+			unitAngle -= 2.0f;
+		}
+		else if (Quadrant == 2) {
+			unitAngle -= 2.0f;
+		}
+		else if (Quadrant == 3) {
+			unitAngle += 2.0f;
+		}
+		else if (Quadrant == 4) {
+			unitAngle += 2.0f;
+		}*/
+		
+
 	}
 	else if (input_->PushKey(DIK_S)) {
-		move -= {0, kEyeSpeed, 0};
+
+		/*if (unitLen < 10) {
+			unitLen+=1.0f;
+		}
+		if (isPush == false) {
+			isPush = true;
+			unitAngle = 180.0f;
+		}*/
+
+		//if (Quadrant == 1) {
+		//	unitAngle += 2.0f;
+		//}
+		//else if (Quadrant == 2) {
+		//	unitAngle += 2.0f;
+		//}
+		//else if (Quadrant == 3) {
+		//	unitAngle -= 2.0f;
+		//}
+		//else if (Quadrant == 4) {
+		//	unitAngle -= 2.0f;
+		//}
+
+		
+
+	}else 
+		if (input_->PushKey(DIK_D)) {
+
+
+		/*if (unitLen < 10) {
+			unitLen += 1.0f;
+		}
+		if (isPush == false) {
+			isPush = true;
+			unitAngle = 270.0f;
+		}*/
+
+		if (Quadrant == 1) {
+			unitAngle -= 2.0f;
+		}
+		else if (Quadrant == 2) {
+			unitAngle += 2.0f;
+		}
+		else if (Quadrant == 3) {
+			unitAngle += 2.0f;
+		}
+		else if (Quadrant == 4) {
+			unitAngle -= 2.0f;
+		}
+
+		
+	}
+	else if (input_->PushKey(DIK_A)) {
+
+		//if (unitLen < 10) {
+		//	unitLen += 1.0f;
+		//}
+		//if (isPush == false) {
+		//	isPush = true;
+		//	unitAngle = 90.0f;
+		//}
+
+		if (Quadrant == 1) {
+			unitAngle += 2.0f;
+		}
+		else if (Quadrant == 2) {
+			unitAngle -= 2.0f;
+		}
+		else if (Quadrant == 3) {
+			unitAngle -= 2.0f;
+		}
+		else if (Quadrant == 4) {
+			unitAngle += 2.0f;
+		}
+
+		
+	}
+	else {
+		if (Quadrant == 1) {
+			unitAngle += 2.0f;
+		}
+		else if (Quadrant == 2) {
+			unitAngle += 2.0f;
+		}
+		else if (Quadrant == 3) {
+			unitAngle -= 2.0f;
+		}
+		else if (Quadrant == 4) {
+			unitAngle -= 2.0f;
+		}
 	}
 
-	if (input_->PushKey(DIK_A)) {
-		move += {-kEyeSpeed, 0, 0};
+
+
+	if (unitAngle >= 1.0f && unitAngle < 90.0f) {
+		Quadrant = 1;
 	}
-	else if (input_->PushKey(DIK_D)) {
-		move += {kEyeSpeed, 0, 0};
+	else if (unitAngle >= 90.0f && unitAngle < 180.0f) {
+		Quadrant = 2;
+	}
+	else if (unitAngle >= 180.0f && unitAngle < 270.0f) {
+		Quadrant = 3;
+	}
+	else if (unitAngle >= 270.0f && unitAngle < 360.0f) {
+		Quadrant = 4;
 	}
 
-	worldTransform_.translation_ += move;
+	//ブレ
+	if (input_->PushKey(DIK_W)) {
+		
+		//ブレ抑制
+		if (oldQuadrant == 1 && Quadrant == 4) {
+			unitAngle += 2.0f;
+		}
+		else if (oldQuadrant == 4 && Quadrant == 1) {
+			unitAngle -= 2.0f;
+		}
 
-	//回転
-	Vector3 rotateY = { 0.0f,0.0f,0.0f };
+	}
+	else if (input_->PushKey(DIK_S)) {
 
-	const float kRotateSpeed = 0.01f;
-	if (input_->PushKey(DIK_E)) {
-		rotateY += {0, kRotateSpeed, 0};
+		
+		//ブレ抑制
+		if (oldQuadrant == 2 && Quadrant == 3) {
+			unitAngle -= 2.0f;
+		}
+		else if (oldQuadrant == 3 && Quadrant == 2) {
+			unitAngle += 2.0f;
+		}
+
 	}
-	else if (input_->PushKey(DIK_Q)) {
-		rotateY -= {0, kRotateSpeed, 0};
+	if (input_->PushKey(DIK_D)) {
+
+
+		
+
+		//ブレ抑制
+		if (oldQuadrant == 3 && Quadrant == 4) {
+			unitAngle -= 2.0f;
+		}
+		else if (oldQuadrant == 4 && Quadrant == 3) {
+			unitAngle += 2.0f;
+		}
 	}
-	worldTransform_.rotation_ += rotateY;
+	else if (input_->PushKey(DIK_A)) {
+
+		
+
+		//ブレ抑制
+		if (oldQuadrant == 1 && Quadrant == 2) {
+			unitAngle -= 2.0f;
+		}
+		else if (oldQuadrant == 2 && Quadrant == 1) {
+			unitAngle += 2.0f;
+		}
+	}
+
+	
+
+	if (input_->PushKey(DIK_W) == false &&
+		input_->PushKey(DIK_S) == false &&
+		input_->PushKey(DIK_A) == false &&
+		input_->PushKey(DIK_D) == false) {
+		
+		/*if (unitLen > 0) {
+			unitLen-= 1.0f;
+		}*/
+		isPush = false;
+		//ブレ抑制
+		if (oldQuadrant == 2 && Quadrant == 3) {
+			unitAngle -= 2.0f;
+		}
+		else if (oldQuadrant == 3 && Quadrant == 2) {
+			unitAngle += 2.0f;
+		}
+
+	}
+
+	if (triggerPointAngle * PI / 180.0f <360.0f) {
+		triggerPointAngle = 0.0f;
+	}
+	
+	//unitAngle += angleSpeed;
+
+	/*if (unitAngle > 2.00f) {
+		unitAngle = 0.0f;
+	}*/
+
+	move = {sin(unitAngle*PI / 180.0f) * unitLen,0.0f,20.0f};
+
+	worldTransform_.translation_ = move;
 
 	//アフィン行列計算
 	Affin::AffinUpdate(worldTransform_);
@@ -104,6 +331,8 @@ void Player::Update(const ViewProjection& viewProjection) {
 	Affin::MatVec(offset, worldTransform_);
 	//offset長さ調節
 	offset = MathUtility::Vector3Normalize(offset) *  kDistancePlayerTo3DReticle;
+
+	
 	//3Dレティクル座標設定
 	Vector3 getWorldMat = Affin::GetVecTrans(worldTransform_.matWorld_);
 	worldTransform3DReticle_.translation_ = Affin::AddVector(Affin::GetVecTrans(worldTransform_.matWorld_), offset);
@@ -117,7 +346,7 @@ void Player::Update(const ViewProjection& viewProjection) {
 
 #pragma region 3Dレティクルへの座標変換
 	Vector3 positionReticle = Affin::GetVecTrans(worldTransform3DReticle_.matWorld_);
-
+	
 	Vector2 windowWH = Vector2(WinApp::GetInstance()->kWindowWidth, WinApp::GetInstance()->kWindowHeight);
 
 	//ビューポート行列
@@ -128,7 +357,7 @@ void Player::Update(const ViewProjection& viewProjection) {
 	windowWH.x / 2, windowWH.y / 2,0,1 };
 
 	//ビュー行列とプロジェクション行列,ビューポート行列を合成する
-	Matrix4 matViewProjectionViewport = viewProjection.matView * viewProjection.matProjection * Viewport;
+	matViewProjectionViewport = viewProjection.matView * viewProjection.matProjection * Viewport;
 
 	//ワールド→スクリーン座標変換(ここで3D～2Dになる)
 	positionReticle = Affin::WDiv(positionReticle, matViewProjectionViewport);
@@ -140,37 +369,37 @@ void Player::Update(const ViewProjection& viewProjection) {
 #pragma endregion
 
 #pragma region マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
-	POINT mousePosition;
-	//マウス座標(スクリーン座標)を取得
-	GetCursorPos(&mousePosition);
+	//POINT mousePosition;
+	////マウス座標(スクリーン座標)を取得
+	//GetCursorPos(&mousePosition);
 
-	//クライアントエリア座標に変換する
-	HWND hwnd = WinApp::GetInstance()->GetHwnd();
-	ScreenToClient(hwnd, &mousePosition);
+	////クライアントエリア座標に変換する
+	//HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	//ScreenToClient(hwnd, &mousePosition);
 
-	sprite2DReticle_->SetPosition(Vector2(mousePosition.x, mousePosition.y));
+	//sprite2DReticle_->SetPosition(Vector2(mousePosition.x, mousePosition.y));
 
-	Matrix4 matVPV = viewProjection.matView * viewProjection.matProjection * Viewport;
+	//Matrix4 matVPV = viewProjection.matView * viewProjection.matProjection * Viewport;
 
-	Matrix4 matInverceVPV = MathUtility::Matrix4Inverse(matVPV);
+	//Matrix4 matInverceVPV = MathUtility::Matrix4Inverse(matVPV);
 
-	//スクリーン座標
-	Vector3 posNear = Vector3(mousePosition.x, mousePosition.y, 0);
-	Vector3 posFar = Vector3(mousePosition.x, mousePosition.y, 1);
+	////スクリーン座標
+	//Vector3 posNear = Vector3(mousePosition.x, mousePosition.y, 0);
+	//Vector3 posFar = Vector3(mousePosition.x, mousePosition.y, 1);
 
-	//マウスのレイ方向
-	Vector3 mouseDirection = posFar - posNear;
-	mouseDirection = MathUtility::Vector3Normalize(mouseDirection);
+	////マウスのレイ方向
+	//Vector3 mouseDirection = posFar - posNear;
+	//mouseDirection = MathUtility::Vector3Normalize(mouseDirection);
 
-	//カメラから標準オブジェク距離
-	const float kDistanceTestObject = 50.0f;
-	worldTransform3DReticle_.translation_ = Affin::AddVector(posNear, mouseDirection * kDistanceTestObject);
+	////カメラから標準オブジェク距離
+	//const float kDistanceTestObject = 50.0f;
+	//worldTransform3DReticle_.translation_ = Affin::AddVector(posNear, mouseDirection * kDistanceTestObject);
 
 	//行列更新
 	Affin::AffinUpdate(worldTransform3DReticle_);
 	worldTransform3DReticle_.TransferMatrix();
 
-	DebugText::GetInstance()->SetPos(20, 200);
+	/*DebugText::GetInstance()->SetPos(20, 200);
 	DebugText::GetInstance()->Printf(
 		"Mouse ScreenPos:(%d,%d)", mousePosition.x, mousePosition.y);
 	DebugText::GetInstance()->SetPos(20, 220);
@@ -182,43 +411,46 @@ void Player::Update(const ViewProjection& viewProjection) {
 	"MouseObject:(%f,%f,%f)",
 		worldTransform3DReticle_.translation_.x, 
 		worldTransform3DReticle_.translation_.y,
-		worldTransform3DReticle_.translation_.z);
+		worldTransform3DReticle_.translation_.z);*/
 	
 #pragma endregion
 }
 
 void Player::Draw(ViewProjection viewProjection) {
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	model_->Draw(worldTransform_, viewProjection);
 
 	//弾描画
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
 
-	//model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);
 
-
-	debugText_->SetPos(50, 110);
-	debugText_->Printf(
-		"reticle:(%f,%f,%f)", worldTransform3DReticle_.matWorld_.m[3][0], worldTransform3DReticle_.matWorld_.m[3][1], worldTransform3DReticle_.matWorld_.m[3][2]);
+	//debugText_->SetPos(50, 110);
+	//debugText_->Printf(
+	//	"reticlePos:(%f,%f,%f)", worldCameraPos.x, worldCameraPos.y, worldCameraPos.z);
 
 }
 
 void Player::Attack()
 {
-	if (input_->TriggerKey(DIK_V)) {
+	if (input_->IsTriggerMouse(0)) {
 
-		const float kBulletSpeed = 1.0f;
+		const float kBulletSpeed = 5.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
-		/*velocity = Affin::GetVecTrans(worldTransform3DReticle_.matWorld_)  - Affin::GetVecTrans(worldTransform_.matWorld_);
+		velocity = Affin::GetVecTrans(worldTransform3DReticle_.matWorld_)  - Affin::GetVecTrans(worldTransform_.matWorld_);
 		MathUtility::Vector3Normalize(velocity);
-		velocity *= kBulletSpeed;*/
+		velocity *= kBulletSpeed;
 
 
 		//速度ベクトルを自機の向きに回転させる
-		Affin::MatVec(velocity, worldTransform_);
 		
-		
+	/*	velocity = { worldTransform3DReticle_.matWorld_.m[3][0] - worldTransform_.matWorld_.m[3][0],
+			worldTransform3DReticle_.matWorld_.m[3][1] - worldTransform_.matWorld_.m[3][1],
+			worldTransform3DReticle_.matWorld_.m[3][2] - worldTransform_.matWorld_.m[3][2] };*/
+
+		/*velocity = MathUtility::Vector3Normalize(velocity);
+		Affin::MatVec(velocity, worldTransform_);	*/
+
 
 		Vector3 worldPos =	//初期値用ワールド座標取得
 		{	worldTransform_.matWorld_.m[3][0],

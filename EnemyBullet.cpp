@@ -9,7 +9,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	model_ = model;
 
 	//テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("mario.jpg");
+	textureHandle_ = TextureManager::Load("block.png");
 
 
 	worldTransform_.Initialize();

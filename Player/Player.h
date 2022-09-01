@@ -76,5 +76,25 @@ private:
 	//2Dレティクルスプライト用
 	std::unique_ptr<Sprite> sprite2DReticle_;
 
+	Matrix4 matViewProjectionViewport;
+	Vector3 worldCameraPos;
+
+	Vector2 unitCirclePos = {0,0};
+	float unitLen = 10.0f;
+	float unitAngle = 180.0f;
+	float maxAngleSpeed = 0.1f;
+	float angleSpeed = 0.0f;
+	const float PI  = 3.14159265f;
+	int oldAngleMode = 1;
+	bool isShift = false;
+	int shiftMoveTime = 10;
+
+	bool isPush = false;
+	int lastTrigger = 0;	//最後に押したキー
+	int triggerMode = 0;	//処理の段階
+	float triggerPointAngle = 0.0f;	//キーを押した時点でのアングル保存
+	int angleMode = 0;	//0はマイナス1はプラス
+	int Quadrant = 0;
+	int oldQuadrant = 0;
 
 };

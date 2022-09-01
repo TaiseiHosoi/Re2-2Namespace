@@ -163,6 +163,13 @@ void Affin::AffinUpdate(WorldTransform& worldTransform)
 		0.0f,0.0f,0.0f,1.0f
 	};
 
+	Matrix4 matRotX = {
+		  1.0f,0.0f,0.0f,0.0f,
+		  0.0f,cos(worldTransform.rotation_.x),sin(worldTransform.rotation_.x),0.0f,
+		  0.0f,-sin(worldTransform.rotation_.x),cos(worldTransform.rotation_.x),0.0f,
+		  0.0f,0.0f,0.0f,1.0f
+	};
+
 	Matrix4 matScale = {
 			worldTransform.scale_.x,0.0f,0.0f,0.0f,
 			0.0f,worldTransform.scale_.y,0.0f,0.0f,
@@ -178,10 +185,12 @@ void Affin::AffinUpdate(WorldTransform& worldTransform)
 	};
 
 	worldTransform.matWorld_ = MathUtility::Matrix4Identity();
+	worldTransform.matWorld_ *= matScale;
+	worldTransform.matWorld_ *= matRotX;
 	worldTransform.matWorld_ *= matRotY;
 	worldTransform.matWorld_ *= matRotZ;
 	worldTransform.matWorld_ *= matTrans;
-	worldTransform.matWorld_ *= matScale;
+	
 
 }
 

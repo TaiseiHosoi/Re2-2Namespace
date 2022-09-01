@@ -25,6 +25,7 @@
 
 
 
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -103,8 +104,11 @@ private: // メンバ変数
 
 	uint32_t textureHandle_ = 0; //テクスチャハンドル
 	uint32_t textureHandle2_ = 0;
+	uint32_t textureHandle3_ = 0;
 	uint32_t soundDataHandle_ = 0;
 	uint32_t voiceHandle_ = 0;
+	uint32_t title = 0;
+	std::unique_ptr<Sprite> startSc_;
 	//キャラ
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
@@ -117,11 +121,12 @@ private: // メンバ変数
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 
-	//要素
+	//model
 	Sprite* sprite_ = nullptr;
 	Model* model_ = nullptr;
 	Model* enemyModel_ = nullptr;
 	Model* modelSkydome_ = nullptr;
+	Model* modelPlane_ = nullptr;
 
 	//ワールドトランスフォーム初期化
 	WorldTransform worldTransform_;
@@ -134,9 +139,9 @@ private: // メンバ変数
 	bool isWait_;
 	int waitTimer_;
 
-
-
-
+	//シーン
+	int scene = 0;;
+	std::unique_ptr<Sprite> opening;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

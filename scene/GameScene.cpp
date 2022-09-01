@@ -36,21 +36,28 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	textureHandle2_ = TextureManager::Load("block.png");
+	textureHandle3_ = TextureManager::Load("tekikun1.png");
+	title = TextureManager::Load("start2.png");
+	
+	startSc_.reset(Sprite::Create(title, Vector2(0,0), Vector4(1, 1, 1, 1), Vector2(0, 0)));
+	
 	// sprite_ = Sprite::Create(textureHandle_, { 100,50 });
 	model_ = Model::Create();
 
 
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
+	
 
 	//自キャラの生成
 	player_ = new Player();
 
 	enemy_ = new Enemy();
 	//自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	modelPlane_ = Model::CreateFromOBJ("plane", true);
+	player_->Initialize(modelPlane_, textureHandle_);
 
-	enemy_->Initialize(model_, textureHandle2_, Vector3(2.0f, 1.0f, -20.0f));
+	enemy_->Initialize(model_, textureHandle3_, Vector3(2.0f, 1.0f, -20.0f));
 
 	enemy_->SetPlayer(player_);
 
@@ -81,72 +88,76 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-
-
-	player_->SetWorldTransformPair(railCamera_->GetWorldTransform());
-
-	//自キャラの更新
-	player_->Update(railCamera_->GetViewProjection());
-
-	//レールカメラ更新
-	railCamera_->Update();
-
-	//敵キャラの更新
-	UpdateEnemyPopCommands();
-
-	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
-		enemy_->SetGameScene(this);
-		enemy_->Update();
+	if (scene == 0) {
+		if (input_->PushKey(DIK_SPACE)) {
+			scene = 1;
+		}
 	}
+	else if (scene == 1) {
+		player_->SetWorldTransformPair(railCamera_->GetWorldTransform());
 
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-		bullet->Update();
-	}
+		//自キャラの更新
+		player_->Update(railCamera_->GetViewProjection());
 
+		//レールカメラ更新
+		railCamera_->Update();
 
+		//敵キャラの更新
+		UpdateEnemyPopCommands();
 
+		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+			enemy_->SetGameScene(this);
+			enemy_->Update();
+		}
 
-
-	//転送用の座標
-	//Vector3 position = worldTransform_.translation_;
-
-	player_->Attack();
-
-	CheckAllCollisions();
-
-	BulletClean();
-
-	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy) {	//デスフラグの立った敵リムーブ
-		return enemy->Dead();
-		});
-
-	//自キャラの更新
-	skydome_->Update();
-
-
-	//行列の再計算
-	viewProjection_.UpdateMatrix();
+		//弾更新
+		for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+			bullet->Update();
+		}
 
 
 
-	//デバッグ用表示
+
+
+		//転送用の座標
+		//Vector3 position = worldTransform_.translation_;
+
+		player_->Attack();
+
+		CheckAllCollisions();
+
+		BulletClean();
+
+		enemys_.remove_if([](std::unique_ptr<Enemy>& enemy) {	//デスフラグの立った敵リムーブ
+			return enemy->Dead();
+			});
+
+		//自キャラの更新
+		skydome_->Update();
+
+
+		//行列の再計算
+		viewProjection_.UpdateMatrix();
+
+
+
+		//デバッグ用表示
 #pragma region debugText
-	debugText_->SetPos(50, 70);
-	debugText_->Printf(
-		"target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
-		viewProjection_.target.z);
+	/*	debugText_->SetPos(50, 70);
+		debugText_->Printf(
+			"target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
+			viewProjection_.target.z);
 
-	debugText_->SetPos(50, 90);
-	debugText_->Printf(
-		"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
+		debugText_->SetPos(50, 90);
+		debugText_->Printf(
+			"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 
+*/
 
-	
 
 
 #pragma endregion 
-
+	}
 }
 
 void GameScene::Draw() {
@@ -172,33 +183,37 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
-	skydome_->Draw(railCamera_->GetViewProjection());
-
-
-	//弾描画
-	/*for (std::unique_ptr<PlayerBullet>& pBullet : playerBullets_) {
-		pBullet->Draw(railCamera_->GetViewProjection());
-	}*/
-
-	//弾描画
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-		bullet->Draw(railCamera_->GetViewProjection());
+	if (scene == 0) {
 
 	}
+	else if (scene == 1) {
+		/// <summary>
+		/// ここに3Dオブジェクトの描画処理を追加できる
+		/// </summary>
+		skydome_->Draw(railCamera_->GetViewProjection());
 
-	player_->Draw(railCamera_->GetViewProjection());
+
+		//弾描画
+		/*for (std::unique_ptr<PlayerBullet>& pBullet : playerBullets_) {
+			pBullet->Draw(railCamera_->GetViewProjection());
+		}*/
+
+		//弾描画
+		for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+			bullet->Draw(railCamera_->GetViewProjection());
+
+		}
+
+		player_->Draw(railCamera_->GetViewProjection());
 
 
-	for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
-		enemy_->Draw(railCamera_->GetViewProjection());
+		for (std::unique_ptr<Enemy>& enemy_ : enemys_) {
+			enemy_->Draw(railCamera_->GetViewProjection());
 
+		}
+
+		skydome_->Draw(railCamera_->GetViewProjection());
 	}
-
-	skydome_->Draw(railCamera_->GetViewProjection());
-
 
 
 	// 3Dオブジェクト描画後処理
@@ -213,12 +228,17 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
+	if (scene == 0) {
+		startSc_->Draw();
+	}
+	else if (scene == 1) {
 
+		player_->DrawUI();
 
-	player_->DrawUI();
+		// デバッグテキストの描画
+		debugText_->DrawAll(commandList);
 
-	// デバッグテキストの描画
-	debugText_->DrawAll(commandList);
+	}
 	//
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -404,16 +424,13 @@ void GameScene::SponeEnemy(Vector3 EnemyPos)
 	std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 
 	//敵キャラの初期化
-	newEnemy->Initialize(model_, textureHandle2_, EnemyPos);
+	newEnemy->Initialize(model_, textureHandle3_, EnemyPos);
 
 	//プレイヤーの位置をセット
 	newEnemy->SetPlayer(player_);
 
 	//敵リスト
 	enemys_.push_back(std::move(newEnemy));
-
-
-
 
 
 }

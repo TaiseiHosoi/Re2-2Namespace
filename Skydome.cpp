@@ -13,7 +13,7 @@ void Skydome::Initialize(Model* model)
 	// X,Y,Z方向スケーリング設定
 	worldTransform_.rotation_ = { 1.0f, 1.0f, 1.0f };
 	worldTransform_.translation_ = { 1.0f, 1.0f, 1.0f };
-	worldTransform_.scale_ = { 500.0f, 200.0f, 500.0f };
+	worldTransform_.scale_ = { 700.0f, 400.0f, 700.0f };
 
 	Affin::UpdateScale(affinScale, worldTransform_);
 	Affin::UpdateMatrixWorld(affinScale, affinTrans, affinRotate, worldTransform_);

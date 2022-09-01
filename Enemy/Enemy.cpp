@@ -3,6 +3,9 @@
 #include "Input.h"
 #include"Player.h"
 #include"GameScene.h"
+#include "MathUtility.h"
+using namespace MathUtility;
+
 
 void Enemy::Initialize(Model* model, uint32_t& textureHandle,Vector3 Pos)
 {
@@ -23,18 +26,18 @@ void Enemy::Initialize(Model* model, uint32_t& textureHandle,Vector3 Pos)
 	worldTransform_.Initialize();
 
 	// X,Y,Z方向スケーリング設定
-	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
+	worldTransform_.scale_ = { 10.0f, 10.0f, 10.0f };
 	worldTransform_.translation_ = Pos;
 
 	InitApproach();
 
-
+	Affin::AffinUpdate(worldTransform_);
 
 }
 
 void Enemy::Update()
 {
-
+	worldTransform_.scale_ = { 10.0f, 10.0f, 10.0f };
 
 
 	//アフィン行列計算
@@ -122,8 +125,17 @@ void Enemy::Fire() {
 	Vector3 PlayerVec = player_->GetWorldPosition();
 	Vector3 EnemyVec = GetWorldPosition();
 
+
 	Vector3 Vec = Vector3(PlayerVec.x - EnemyVec.x, PlayerVec.y - EnemyVec.y, PlayerVec.z - EnemyVec.z);	//ヴェクトルの引き算
-	Vector3 normalizeVec = MathUtility::Vector3Normalize(Vec);	//正規化
+
+	float bSpeed = 0.5f;
+	
+	Vector3 normalizeVec = MathUtility::Vector3Normalize(Vec) ;	//正規化
+	normalizeVec.x *= bSpeed;
+	normalizeVec.y *= bSpeed;
+	normalizeVec.z *= bSpeed;
+
+	
 	//スピードは正規化した値のまま(1.0f)
 
 
@@ -168,4 +180,5 @@ Matrix4 Enemy::GetMatrix()
 void Enemy::OnCollision()
 {
 	isDead_ = true;
+	deathPoint++;
 }
