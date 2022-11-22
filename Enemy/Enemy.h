@@ -1,120 +1,77 @@
 #pragma once
-#include "Audio.h"
 #include "DebugText.h"
-#include <DirectXCommon.h>
 #include "Input.h"
-#include "Math.h"
-#include "Model.h"
-#include "SafeDelete.h"
-#include "Sprite.h"
 #include "ViewProjection.h"
-#include "Windows.h"
-#include "WorldTransform.h"
-#include <DirectXMath.h>
-#include <d3d12.h>
-#include <wrl.h>
-#include"EnemyBullet.h"
-#include"memory"
-#include "list"
-
-
+#include <Model.h>
+#include <WorldTransform.h>
+#include <affin.h>
+#include <cassert>
+#include "EnemyBullet.h"
+#include <list>
 class Player;
+
 class GameScene;
 
 class Enemy {
+  public:
+	///< summary>
+	///初期化
+	///</summary>
+	void Initialize(Model* model, uint32_t textureHandle, Vector3 vector3);
 
-public:
-	void Initialize(Model* model, uint32_t& textureHandle,Vector3 Pos);
+	///< summary>
+	///初期化
+	///</summary>
 	void Update();
-	void Draw(ViewProjection viewProjection);
 
-	void Approach();	//接近
-	void InitApproach();
+	///< summary>
+	///初期化
+	///</summary>
+	void Draw(ViewProjection viewProjection_);
 
-	void Leave();	//離脱
+	///< summary>
+	///初期化
+	///</summary>
+	void Fire();
 
+	//発射隔離
+	static const int kFireInterval = 60;
 
-	void Fire();	//弾発射
+	//接近フェーズ初期化
+	void Approach();
+	
+	void SetPlayer(Player* player) { player_ = player;}
 
-	void BulletClean();
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
-	void SetPlayer(Player* player) {	//このクラスのメンバ変数セット
-		player_ = player;
-	}
-
-	void SetGameScene(GameScene* gameScene) {	//このクラスのメンバ変数セット
-		gameScene_ = gameScene;
-	}
-
-
-	enum class Phase {
-		Approach,	//接近
-		Leave,	//離脱
-	};
-
-	//玉のインターバル
-	static const int kFireInterval = 100;
-
-	//ワールド座標取得
+	////ワールド座標を取得
 	Vector3 GetWorldPosition();
-	Matrix4 GetMatrix();
 
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
-	bool Dead() const { return isDead_; }
 
-	////タマリストを取得
-	//const std::list<std::unique_ptr<EnemyBullet>>& GetBulletd() {
-	//	return bullets_;
-	//}
+	bool IsDead() const { return isDead_; }
 
-private:
+  private:
+	//ワールド変換データ
 	WorldTransform worldTransform_;
-
+	//モデル
 	Model* model_ = nullptr;
-
-	Matrix4 matTrans;
-	Matrix4 matScale;
-	Matrix4 matRotate;
-
+	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	DirectXCommon* dxCommon_ = nullptr;
+
 	Input* input_ = nullptr;
-	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
-	
-	Matrix4 matVelocity = MathUtility::Matrix4Identity();	//velocity専用行列	
-
-	Vector3 transPos = { 0, 0, 0 };
-
-	Matrix4 affinTrans = MathUtility::Matrix4Identity();
-	Matrix4 affinRotate = MathUtility::Matrix4Identity();
-	Matrix4 affinScale = MathUtility::Matrix4Identity();
-
-	//移動の速さ
-	const float kEnemyCharacterSpeed = 0.2f;
-
-	//x方向に移動
-	Vector3 move = { kEnemyCharacterSpeed, 0, 0 };
-
-	//フェーズ
-	Phase phase_ = Phase::Approach;
-
-	//フェーズの速さ
-	const float kEnemyPhaseCharacterSpeed = 0.1f;
-
-	//発射タイマー
-	int32_t bFireTimer = 0;
-
-	//↓参照するよう
-	//自機
+	//自キャラ
 	Player* player_ = nullptr;
-	//ゲームシーン
-	GameScene* gameScene_ = nullptr;
 
 	//デスフラグ
 	bool isDead_ = false;
-	int deathPoint = 0;
 
+	//発射タイマー
+	int32_t shotTimer = 0;
+
+	//ゲームシーン
+	GameScene* gameScene_ = nullptr;
 };

@@ -1,41 +1,38 @@
 ﻿#pragma once
 
 #include "Audio.h"
+#include "DebugCamera.h"
 #include "DebugText.h"
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
-#include "Player.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include <DirectXMath.h>
+#include "affin.h"
+#include "Player.h"
 #include "Enemy.h"
-#include "Skydome.h"
-#include "RailCamera.h"
-#include "DebugCamera.h"
+#include "Skydome/Skydome.h"
+#include "RailCamera/RailCamera.h"
 #include "EnemyBullet.h"
-#include "PlayerBullet.h"
 #include <sstream>
-#include <fstream>
-#include <ostream>
-#include <stdio.h>
-#include <iostream>
-
-
-
+#include "Title.h"
+#include "push.h"
+#include "GameClear.h"
+#include "GameOver.h"
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
 class GameScene {
 
-public: // メンバ関数
-  /// <summary>
-  /// コンストクラタ
-  /// </summary>
+  public: 
+	// メンバ関数
+	/// <summary>
+	/// コンストクラタ
 	GameScene();
+	
 
 	/// <summary>
 	/// デストラクタ
@@ -65,85 +62,107 @@ public: // メンバ関数
 	/// <summary>
 	/// 敵弾を追加する
 	/// </summary>
-	void AddEnemyBullet(std::unique_ptr<EnemyBullet>enemyBullet);
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet>& enemyBullet);
 
-	void InitEnemy();
-	//タマリストを取得
-	const std::list<std::unique_ptr<EnemyBullet>>& GetEnemyBullet() {
-		return enemyBullets_;
-	}
-	const std::list<std::unique_ptr<PlayerBullet>>& GetPlayerBullet() {
-		return playerBullets_;
-	}
-
-	//リムーブ
-	void BulletClean();
-
-	//敵発生コマンド
+	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
 	void LoadEnemyPopData();
-	void UpdateEnemyPopCommands();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdataEnemyPopCommands();
+
+	/// <summary>
+	/// 敵の発生
+	/// </summary>
+	void GenerEnemy(Vector3 EnemyPos);
+
+	//弾リストを取得
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return enemybullets_; }
+
+	//シーン切り替え
+	enum class SceneNo {
+		Title, //タイトル
+		Game,  //射撃
+		Clear, //ゲームクリア
+		Over   //ゲメオーバー
+	};
 
 
-	//敵発生コマンド
-	std::stringstream enemyPopCommands;
-
-	//敵生成
-	void SponeEnemy(Vector3 EnemyPos);
-
-	
-
-private: // メンバ変数
+  private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
-	Skydome* skydome_ = nullptr;	//天球
-	RailCamera* railCamera_ = nullptr;	//レールカメラ
-	WorldTransform cameraTransform;	//カメラ用のトランスフォーム
-	DebugCamera* debugCamera_ = nullptr;	//デバッグカメラ
 
-	uint32_t textureHandle_ = 0; //テクスチャハンドル
+	//テクスチャハンドル
+	uint32_t textureHandle_ = 0;
 	uint32_t textureHandle2_ = 0;
+	//ボタンを押せ!!
+	uint32_t textureHandle0_ = 0;
+	push* push_ = nullptr;
+	//タイトル
 	uint32_t textureHandle3_ = 0;
-	uint32_t soundDataHandle_ = 0;
-	uint32_t voiceHandle_ = 0;
-	uint32_t title = 0;
-	std::unique_ptr<Sprite> startSc_;
-	//キャラ
-	Player* player_ = nullptr;
-	Enemy* enemy_ = nullptr;
-	std::list<std::unique_ptr<Enemy>> enemys_;	//敵のリスト作成
+	Title* title_ = nullptr;
+	//ゲームクリア
+	uint32_t textureHandle4_ = 0;
+	GameClear* gameClear_ = 0;
+	//ゲームオーバー
+	uint32_t textureHandle5_ = 0;
+	GameOver* gameOver_ = 0;
 
-	//弾
-	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
-	std::list<std::unique_ptr<PlayerBullet>> playerBullets_;
+	// 3Dモデル
+	Model* model_ = nullptr;
 
-	//カメラ上方向の角度
+	
+	//ビュープロジェクション
+	ViewProjection viewProjection_;
+	//デバッグカメラ
+	DebugCamera* debugCamera_ = nullptr;
+	//カメラ上方向
 	float viewAngle = 0.0f;
 
-	//model
-	Sprite* sprite_ = nullptr;
-	Model* model_ = nullptr;
-	Model* enemyModel_ = nullptr;
+	//自キャラ
+	Player* player_ = nullptr;
+	int playerRadius = 1;
+	int playerBulletRadius = 1;
+	//自機のの撃破カウント
+	int playerTimer = 1000;
+	//敵キャラ
+	std::list<std::unique_ptr<Enemy>> enemys_;
+	int enemyRadius = 1;
+	int enemyBulletRadius = 1;
+	//敵の撃破カウント
+	int enemyDefeat = 0;
+	//弾 複数
+	std::list<std::unique_ptr<EnemyBullet>> enemybullets_;
+
+	//スカイドーム
+	Skydome* skydome_ = nullptr;
+	//3Dモデル
 	Model* modelSkydome_ = nullptr;
-	Model* modelPlane_ = nullptr;
 
-	//ワールドトランスフォーム初期化
-	WorldTransform worldTransform_;
-	WorldTransform enemyWorldTransform_;
+	//レールカメラ
+	RailCamera* railCamera_ = nullptr;
 
-	//ビュープロジェクション初期化
-	ViewProjection viewProjection_;
+	
 
-	//待ち時間フラグ用変数
-	bool isWait_;
-	int waitTimer_;
 
-	//シーン
-	int scene = 0;;
-	std::unique_ptr<Sprite> opening;
-	/// <summary>
-	/// ゲームシーン用
-	/// </summary>
-	///
+	// 敵発生コマンド
+	std::stringstream enemyPopCommands;
+
+	Vector3 vector3(float x, float y, float z);
+	Vector4 vector4(int x, int y, int z, int w);
+
+	//待機中フラグ
+	bool isStand_ = false;
+
+	//待機タイマー
+	int standTime_ = 0;
+
+	SceneNo sceneNo_ = SceneNo::Title;
+
+
 };

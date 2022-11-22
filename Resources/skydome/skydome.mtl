@@ -1,11 +1,13 @@
-# Blender MTL File: 'skyDome.blend'
+# Blender MTL File: 'skydome.blend'
 # Material Count: 1
 
-newmtl None
-Ns 500
-Ka 1 1 1
-Kd 0 0 0
-Ks 0 0 0
-d 1
+newmtl マテリアル
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
 illum 2
-map_Kd Fine_Basin.png
+map_Kd Fine_Basin.jpg

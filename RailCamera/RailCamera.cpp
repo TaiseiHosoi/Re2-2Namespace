@@ -1,96 +1,87 @@
 #include "RailCamera.h"
 
-
-void RailCamera::Initialize(WorldTransform worldTransform)
-{
-	//ワールド座標初期化
-	worldTransform_.translation_ = worldTransform.translation_;
-	worldTransform_.rotation_ = worldTransform.rotation_;
+void RailCamera::Initialize(const Vector3 position, const Vector3 rota) {
+	//ワールドトランスフォームの初期設定
+	worldTransform_.translation_ = position;
+	worldTransform_.rotation_ = rota;
+	//ワールド変換の初期化
 	worldTransform_.Initialize();
 
-	//ビュープロジェクション初期化
-	viewprojection_.Initialize();
-	viewprojection_.farZ = 2000.0f;
-	viewprojection_.nearZ = 2.0f;
-	viewprojection_.fovAngleY = 1.4f;
-
-
-	//インスタンス取得
 	input_ = Input::GetInstance();
+	debugText_ = DebugText::GetInstance();
 
+	//ビュープロジェクションの初期化
+	viewProjection_.Initialize();
 }
 
-void RailCamera::Update()
-{
-
-	//回転
-	Vector3 rotate = { 0.0f,0.0f,0.0f };
-
-	const float kRotateSpeed = 0.01f;
-	if (input_->PushKey(DIK_S)) {
-	rotate += {kRotateSpeed, 0, 0};
-	}
-	else if (input_->PushKey(DIK_W)) {
-	rotate -= {kRotateSpeed, 0, 0};
-	}
-	if (input_->PushKey(DIK_A)) {
-		rotate += {0, kRotateSpeed, 0};
-	}
-	else if (input_->PushKey(DIK_D)) {
-		rotate -= {0, kRotateSpeed, 0};
-	}
-
-	if (worldTransform_.rotation_.x > 0.6f) {
-		worldTransform_.rotation_.x = 0.6f;
-	}
-	else if (worldTransform_.rotation_.x < -0.6f) {
-		worldTransform_.rotation_.x = -0.6f;
-	}
+void RailCamera::Update() {
 	
+	//キャラクターの移動ベクトル
+	Vector3 move = {0, 0, 0};
+	Vector3 rotate = {0, 0, 0};
+	//キャラクターの移動の速さ
+	const float kCharacterSpeed = 0.2f;
 
-	worldTransform_.rotation_ += rotate;
+	//押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_UP)) {
+		move = {0, kCharacterSpeed, 0};
+	} else if (input_->PushKey(DIK_DOWN)) {
+		move = {0, -kCharacterSpeed, 0};
+	}
+	if (input_->PushKey(DIK_LEFT)) {
+		move = {-kCharacterSpeed, 0, 0};
+	} else if (input_->PushKey(DIK_RIGHT)) {
+		move = {kCharacterSpeed, 0, 0};
+	}
 
-
-	//視点の移動速さ
-	const float kEyeSpeed = 0.1f;
-	//移動
-	Vector3 move = { 0.0f, 0.0f, kEyeSpeed };
-
-	Affin::MatVec(move, worldTransform_);
-	
 	worldTransform_.translation_ += move;
 
+	//回転
+	const float kChestRotSpeed = 0.02f;
 
-	//アフィン行列計算
-	Affin::AffinUpdate(worldTransform_);
+	//押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_U)) {
+		rotate = {0, kChestRotSpeed, 0};
+	} else if (input_->PushKey(DIK_I)) {
+		rotate = {0, -kChestRotSpeed, 0};
+	}
+	worldTransform_.rotation_ += rotate;
 
-	//アフィン行列転送
+	//行列更新
+	AffinTrans::affin(worldTransform_);
+
 	worldTransform_.TransferMatrix();
 
-	viewprojection_.eye = worldTransform_.translation_;
+	viewProjection_.eye = worldTransform_.translation_;
 	//ワールド前方ベクトル
 	Vector3 forward(0, 0, 1);
 	//レールカメラの回転を反映
-	Affin::VectorUpdate(forward, worldTransform_);
-	//視点から前方に進んだ位置が注視店
-	viewprojection_.target = viewprojection_.eye + forward;
-	//world上方ベクトル
+	forward = AffinTrans::MatVector(forward, worldTransform_.matWorld_);
+	//視点から前方に適当な距離進んだ位置が注視点
+	viewProjection_.target.x = viewProjection_.eye.x + forward.x;
+	viewProjection_.target.y = viewProjection_.eye.y + forward.y;
+	viewProjection_.target.z = viewProjection_.eye.z + forward.z;
+	//ワールド上方ベクトル
 	Vector3 up(0, 1, 0);
-	
 	//レールカメラの回転を反映
-	Affin::VectorUpdate(up, worldTransform_);
+	viewProjection_.up = AffinTrans::MatVector(up, worldTransform_.matWorld_);
 	//ビュープロジェクションを更新
-	viewprojection_.UpdateMatrix();
-	viewprojection_.TransferMatrix();
+	viewProjection_.UpdateMatrix();
+	viewProjection_.TransferMatrix();
+
+	debugText_->SetPos(50, 130);
+	debugText_->Printf(
+	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
 }
 
-ViewProjection RailCamera::GetViewProjection()
-{
-	return viewprojection_;
+ViewProjection& RailCamera::GetViewProjection() { 
+	return viewProjection_; 
 }
 
-WorldTransform* RailCamera::GetWorldTransform()
-{
+WorldTransform* RailCamera::GetWorldPosition() { 
+    
+
 	return &worldTransform_;
 }
+

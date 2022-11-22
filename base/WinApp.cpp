@@ -1,5 +1,4 @@
 ﻿#include "WinApp.h"
-
 #include <string>
 
 namespace {
